@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx">
+<% include ../partials/head %>
+<style>
+    .img-principal {
+      max-width: 100%;
+      max-height: 70vh;
+      height: 100vh;
+      box-shadow: 8px 8px 10px #aaa;
+      border-radius: 2%;
+    }
+    .img-secundarias {
+      max-width: 100%;
+      max-height: 55vh;
+      height: 100vh;
+      box-shadow: 8px 8px 10px #aaa;
+      border-radius: 5%;
+    }
+</style>
+    <% include ../partials/navbar %>
+
+        <body>
+            <!--Main layout-->
+            <main class="mt-5 pt-4">
+                <div class="container dark-grey-text mt-5">
+                    <!--Grid row-->
+                    <div class="row wow fadeIn">
+                        <!--Grid column-->
+                        <div class="col-md-6 mb-4 text-center">
+                            <img src="<%= producto.ImagenesProducto.split(',')[0]%>" class="img-principal" alt="">
+                        </div>
+                        <!--Grid column-->
+                        <!--Grid column-->
+                        <div class="col-md-6 mb-4">
+                            <!--Content-->
+                            <div class="p-4">
+                                <div class="mb-3">
+                                    <a href="">
+                                        <span class="badge purple mr-1"><%= producto.Categoria%></span>
+                                    </a>
+                                    <a href="">
+                                        <span class="badge blue mr-1"><%= producto.Estado%></span>
+                                    </a>
+                                    <% if (producto.BestSeller) {%>
+                                        <a href="">
+                                            <span class="badge red mr-1">Bestseller</span>
+                                        </a>
+                                    <%}%>
+                                </div>
+
+                                <p class="lead">
+                                    <span class="mr-1">
+                                        <del>$<%= producto.PrecioOriginal%></del>
+                                    </span>
+                                    <span>$<%= producto.PrecioActual%></span>
+                                </p>
+
+                                <p class="lead font-weight-bold">Descripcion</p>
+
+                                <p><%= producto.Descripcion%></p>
+
+                                <form class="d-flex justify-content-left">
+                                    <!-- Default input -->
+                                    <input id="cantidad_form" type="number" value="1" aria-label="Search" class="form-control" style="width: 100px">
+                                    <button id="btnAgregarCarrito" class="btn btn-primary btn-md my-0 p" type="button">Agregar Al Carrito
+                                        <i class="fas fa-shopping-cart ml-1"></i>
+                                    </button>
+                                </form>
+
+                            </div>
+                            <!--Content-->
+
+                        </div>
+                        <!--Grid column-->
+
+                    </div>
+                    <!--Grid row-->
+
+                    <hr>
+
+                    <% if (producto.InformacionAdicional.length > 10) {%>
+                        <!--Grid row-->
+                        <div class="row d-flex justify-content-center wow fadeIn">
+
+                            <!--Grid column-->
+                            <div class="col-md-6 text-center">
+
+                                <h4 class="my-4 h4">Informacion Adicional</h4>
+
+                                <p><%= producto.InformacionAdicional%></p>
+
+                            </div>
+                            <!--Grid column-->
+
+                        </div>
+                        <!--Grid row-->
+                    <%}%>
+                    <% if (producto.ImagenesProducto.split(',').length > 1) {%>
+                        <!--Grid row-->
+                        <div class="row wow fadeIn">
+                            <!--Grid column-->
+                            <% producto.ImagenesProducto.split(',').forEach( imagen => {%>
+                                <% if (producto.ImagenesProducto.split(',').indexOf(imagen) >= 1) {%>
+                                    <div class="col-lg-4 col-md-12 mb-4 text-center">
+
+                                        <img src="<%=imagen%>" class="img-secundarias" alt="">
+        
+                                    </div>
+                                <%}%>
+                            <%});%>
+                        </div>
+                        <!--Grid row-->
+                    <%}%>
+                </div>
+            </main>
+            <!--Main layout-->
+            <!-- Flexbox container for aligning the toasts -->
+            <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+                <!-- Then put toasts within -->
+                <div class="toast" role="alert" aria-live="assertive" data-delay="1500" data-autohide="true" aria-atomic="true" style="position: fixed; top: 70vh; right: 40vw;z-index: 1;">
+                    <div class="toast-header">
+                        <i class="fas fa-shopping-cart fa-2x mr-2" style="color: whitesmoke;"></i>
+                        <strong id="titulo_toast" class="mr-auto" style="color:whitesmoke;font-size: 1.5rem;"></strong>
+                    </div>
+                    <div id="texto_toast" class="toast-body"></div>
+                </div>
+            </div>
+            
+            <p id="cantidad_actual" hidden><%= producto.CantidadDisponible %></p>
+            <% include ../partials/footer %>
+            <script>
+                $(document).ready(function(){
+                    $('#btnAgregarCarrito').click(e => {
+                        var cantidad_disponible = parseInt($('#cantidad_actual').text());
+                        var text_toast = 'Se agrego el producto a tu carrito';
+                        var color_toast = 'green';
+                        console.log("cantidadDisponible: "+cantidad_disponible+"  Cantidad Seleccionada: "+$('#cantidad_form').val());
+                        if (cantidad_disponible < $('#cantidad_form').val() || cantidad_disponible == 0 || $('#cantidad_form').val() == 0) {
+                            color_toast = 'tomato';
+                            text_toast = 'No se puede ordenar esa cantidad de productos, por favor elige otra';
+                            abrirToast(text_toast, color_toast);
+                        } else {
+                            if (sessionStorage.getItem('SesionCarrito') == null) {
+                                $.get("/CrearCarritto", function(data, status){
+                                    sessionStorage.setItem('SesionCarrito', data);
+                                    text_toast = '\n Se creo el carrito con tu pedido';
+                                    // se muestra el boton de cerrado y se desactiva el auto cerrado del toast
+                                    agregarPedido(text_toast, color_toast);
+                                });
+                            } else {
+                                agregarPedido(text_toast, color_toast); 
+                            }
+                        }
+                        
+                    });
+                });
+
+                function agregarPedido(text, color) {
+                    $.post('/AgregarPedido', {
+                        IdCarrito: sessionStorage.getItem('SesionCarrito'),
+                        IdProducto: "<%= producto.id%>",
+                        Cantidad: Number($('#cantidad_form').val()),
+                        PrecioUnitario: Number("<%= producto.PrecioActual%>"),
+                        Completado: false
+                    }, function(status) {
+                        if (status == 'OK') {
+                            $('#carrito_badge').text(parseInt($('#carrito_badge').text()) + 1);
+                            $('#cantidad_actual').text((parseInt($('#cantidad_actual').text())-$('#cantidad_form').val()));
+                            abrirToast(text, color);
+                        }
+                    });
+                    abrirToast(text, color);
+                }
+
+                function abrirToast(text, color) {
+                    $('#titulo_toast').text('Carrito');
+                    $('#texto_toast').text(text);
+                    $('.toast-header').css('background-color', color);
+                    $('.toast').toast('show');
+                }
+            </script>
+        </body>
+</html>

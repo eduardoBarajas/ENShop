@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Nuevo mensaje</h2>
+<form id="myForm">
+  Mensaje:<br>
+  <input id="txt" type="text" name="msg" value="Mensaje">
+  <br>
+  <input type="button" onclick="sendPost()">
+</form> 
+
+<script>
+    function sendPost() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var x = document.createElement("LABEL");
+                var t = document.createTextNode("EXITO");
+                x.setAttribute("for", "exito");
+                x.appendChild(t);
+                document.getElementById("myForm").insertBefore(x,document.getElementById("exito"));
+            }
+        };
+        xhttp.open('POST', '/test/guardar', true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        var text = document.getElementById('txt').value;
+        console.log(text);
+        xhttp.send("msg=".concat(text));
+    }
+</script>
+</body>
+</html>

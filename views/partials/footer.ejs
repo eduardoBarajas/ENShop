@@ -1,0 +1,67 @@
+<!--Footer-->
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+    <hr class="my-4">
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3">
+        © CODEns 2019 Derechos Reservados:
+	<a href="https://www.facebook.com/CODEns-373633163481199/" target="_blank">
+        <i class="fab fa-facebook-f mr-3" style="width: 5vw;"></i>
+        </a>
+    </div>
+    <!--/.Copyright-->
+
+    </footer>
+    <!--/.Footer-->
+
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="/js/jquery-3.4.0.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="/js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="/js/mdb.min.js"></script>
+    <!-- Initializations -->
+    <script type="text/javascript">
+        // Animations initialization
+        new WOW().init();
+    </script>
+    <script>
+        if ($(document).ready(function() {
+            if (sessionStorage.getItem('SesionCarrito') != null) {
+                $.get('/Pedidos/'+sessionStorage.getItem('SesionCarrito'), function(data, status) {
+                    if (status == 'success') {
+                        $('#carrito_badge').text(parseInt(data));           
+                    }
+                });
+            } else {
+                $('#carrito_badge').text('0');
+            }
+        }));
+    </script>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-storage.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#config-web-app -->
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyB1LKzSELcOuXiHRhdxY2fXecKyaRotM6Y",
+            authDomain: "codens-18ad2.firebaseapp.com",
+            databaseURL: "https://codens-18ad2.firebaseio.com",
+            projectId: "codens-18ad2",
+            storageBucket: "codens-18ad2.appspot.com",
+            messagingSenderId: "311440713794",
+            appId: "1:311440713794:web:07f8926444234a20"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    

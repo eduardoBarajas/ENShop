@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx">
+<% include ../partials/head %>
+<style>
+    .PrecioOriginal {
+        -webkit-text-decoration-line: line-through; /* Safari */
+        text-decoration-line: line-through; 
+    }
+    img {
+      max-width: 100%;
+      max-height: 30vh;
+      height: 100vh;
+    }
+</style>
+<% include ../partials/navbar %>
+    <body>
+        <div class="container" style="margin-top: 4.5rem;">
+            <!--Navbar-->
+            <nav class="navbar navbar-expand-lg navbar-dark mdb-color lighten-3 mt-3 mb-5" style="background-color: tomato!important;">
+
+                <!-- Navbar brand -->
+                <span class="navbar-brand">Categorias:</span>
+    
+                <!-- Collapse button -->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+                aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+    
+                <!-- Collapsible content -->
+                <div class="collapse navbar-collapse" id="basicExampleNav">
+    
+                <!-- Links -->
+                <ul class="navbar-nav mr-auto">
+                    <li id="btn_opcion_1" class="nav-item active">
+                    <a class="nav-link" onclick="getProductos('')">Todos</a>
+                    </li>
+                    <li id="btn_opcion_2" class="nav-item">
+                        <a class="nav-link" onclick="getProductos('Ropa')">Ropa</a>
+                    </li>
+                    <li id="btn_opcion_3" class="nav-item">
+                        <a class="nav-link"  onclick="getProductos('Calzado')">Calzado</a>
+                    </li>
+                    <li id="btn_opcion_4" class="nav-item">
+                        <a class="nav-link"  onclick="getProductos('Electronicos')">Electronicos</a>
+                    </li>
+                    <li id="btn_opcion_5" class="nav-item">
+                        <a class="nav-link"  onclick="getProductos('Electrodomesticos')">Electrodomesticos</a>
+                    </li>
+                    <li id="btn_opcion_6" class="nav-item">
+                        <a class="nav-link"  onclick="getProductos('Varios')">Varios</a>
+                    </li>
+                </ul>
+                <!-- Links -->
+    
+                <form class="form-inline">
+                    <div class="md-form my-0">
+                    <input id="busqueda_input" onkeyup="buscarProducto()" class="form-control mr-sm-2" type="text" placeholder="Buscar" aria-label="Buscar">
+                    </div>
+                </form>
+                </div>
+                <!-- Collapsible content -->
+    
+            </nav>
+            <!--/.Navbar-->
+            <!--Section: Products v.3-->
+        <section id="productos" class="text-center mb-4 mx-4"></section>
+            <!--Section: Products v.3-->
+            <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+                <!-- Then put toasts within -->
+                <div class="toast" role="alert" aria-live="assertive" data-delay="1000" aria-atomic="true" style="position: fixed; top: 60vh; right: 40vw;z-index: 1;">
+                    <div class="toast-header" style="max-height:10vh;">
+                    <img src="..." class="rounded mr-2" alt="...">
+                    <strong id="titulo_toast" class="mr-auto" style="color:whitesmoke;font-size: 1.5rem;"></strong>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div id="texto_toast" class="toast-body"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Flexbox container for aligning the toasts -->
+        <% include ../partials/footer %>
+            <script>
+                $(document).ready(function() {
+                    $.ajax({
+                        url: '/ObtenerProductos',
+                        type: 'GET',
+                        success: function(data, status) {
+                            if (status == 'success') {
+                                setProducts(data);
+                            }
+                        }
+                    });
+                });
+                function getProductos(categoria) {
+                    $.ajax({
+                        url: '/ObtenerProductos/'+categoria,
+                        type: 'GET',
+                        success: function(data, status) {
+                            if (status == 'success') {
+                                if (data.length > 0) {
+                                    setOpcionSeleccionada(categoria);
+                                    setProducts(data);
+                                } else {
+                                    $('#titulo_toast').text('No Hay Productos');
+                                    $('#texto_toast').text('No se encontraron en '+categoria);
+                                    $('.toast-header').css('background-color','tomato');
+                                    $('.toast').toast('show');
+                                }
+                            }
+                        }
+                    });
+                }
+                function setOpcionSeleccionada(categoria) {
+                    for (let x = 0; x < 6; x++) {
+                        if ($('#btn_opcion_'+(x+1)).hasClass('active')) {
+                            $('#btn_opcion_'+(x+1)).removeClass('active');
+                        }
+                    }
+                    switch (categoria) {
+                        case '':  $('#btn_opcion_1').addClass('active');break;
+                        case 'Ropa':  $('#btn_opcion_2').addClass('active');break;
+                        case 'Calzado':  $('#btn_opcion_3').addClass('active');break;
+                        case 'Electronicos':  $('#btn_opcion_4').addClass('active');break;
+                        case 'Electrodomesticos':  $('#btn_opcion_5').addClass('active');break;
+                        case 'Varios':  $('#btn_opcion_6').addClass('active');break;
+                    }
+                }
+                function buscarProducto(event) {
+                    if ($('#busqueda_input').val() == '') {
+                        getProductos('');
+                        console.log('ENTRO AQUI');
+                    } else {
+                        $.ajax({
+                            url: '/BuscarProductos/'+$('#busqueda_input').val(),
+                            type: 'GET',
+                            success: function (data, status) {
+                                if (status == 'success') {
+                                    setProducts(data);
+                                }
+                            }
+                        });
+                    }
+                }
+                function setProducts(data) {
+                    $('#productos').empty();
+                    let elements = '<div class="row wow fadeIn">';
+                    for (let x = 0; x < data.length; x++) {
+                        if (x > 0 && x%4 == 0) {
+                            elements += '</div>';
+                            elements += '<div class="row wow fadeIn">';
+                        }
+                        elements += '<div class="col-lg-3 col-md-3 mb-4"><div class="card"><div class="view overlay"><img src="'+data[x].ImagenesProducto.split(',')[0]+'" class="card-img-top" alt="">';
+                        elements += '<a href="/Producto/'+data[x]._id+'"><div class="mask rgba-white-slight"></div></a></div><div class="card-body text-center">';
+                        elements += '<a class="grey-text"><h5>'+data[x].Categoria+'</h5></a><h5><strong><a href="/Producto/'+data[x]._id+'" class="dark-grey-text">'+data[x].Nombre+'<span class="badge badge-pill danger-color">'+data[x].Estado+'</span>';
+                        elements += '</a></strong></h5><h4 class="font-weight-bold red-text PrecioOriginal"><strong>'+data[x].PrecioOriginal+'$</strong></h4><h4 class="font-weight-bold blue-text">';
+                        elements += '<strong>'+data[x].PrecioActual+'$</strong></h4></div></div></div>';
+                    }
+                    elements += '</div>';
+                    $('#productos').append(elements);
+                }
+            </script>
+    </body>
+</html>
