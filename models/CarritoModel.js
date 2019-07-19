@@ -19,5 +19,5 @@ var CarritoSchema = new Schema({
     FechaCreado: String
 });
 
-var ModeloCarrito = mongoose.model('ModeloCarrito', CarritoSchema);
+var ModeloCarrito = mongoose.model('Carritos', CarritoSchema);
 module.exports = ModeloCarrito;

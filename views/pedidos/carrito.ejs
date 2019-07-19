@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx">
+<% include ../partials/head %>
+<style>
+    .paint-in {
+        animation-name: paint-in-anim;
+        animation-duration: 1s;
+        animation-timing-function: ease;
+        animation-delay: 0s;
+        animation-iteration-count: 1;
+        animation-direction: normal;
+        animation-fill-mode: forwards;
+    }
+    @keyframes paint-in-anim {
+        0%   {
+        background-color: white;
+        color: black;
+        }
+        100%   {
+        background-color: #a6c;
+        color: whitesmoke;
+        }
+    }
+    .paint-out {
+        animation-name: paint-out-anim;
+        animation-duration: 1s;
+        animation-timing-function: ease;
+        animation-delay: 0s;
+        animation-iteration-count: 1;
+        animation-direction: normal;
+        animation-fill-mode: forwards;
+    }
+    @keyframes paint-in-anim {
+        100%   {
+        background-color: #a6c;
+        color: whitesmoke;
+        }
+        0%   {
+        background-color: white;
+        color: black;
+        }
+    }
+    .fade-out {
+        animation-name: desaparecer-anim;
+        animation-duration: 1s;
+        animation-timing-function: ease;
+        animation-delay: 0s;
+        animation-iteration-count: 1;
+        animation-direction: normal;
+        animation-fill-mode: forwards;
+    }
+    @keyframes desaparecer-anim {
+        0%   {
+        opacity: 1;
+        }
+        100%   {
+        opacity: 0;
+        }
+    }
+    .fade-in {
+        animation-name: aparecer-anim;
+        animation-duration: 1s;
+        animation-timing-function: ease;
+        animation-delay: 0s;
+        animation-iteration-count: 1;
+        animation-direction: normal;
+        animation-fill-mode: forwards;
+    }
+    @keyframes aparecer-anim {
+        0%   {
+        opacity: 0;
+        }
+        100%   {
+        opacity: 1;
+        }
+    }
+</style>
+<% include ../partials/navbar %>
+<script>
+    document.getElementById('carrito-id').remove();
+</script>
+    <body>
+    <!--Main layout-->
+    <main class="mt-5 pt-4">
+        <div class="container wow fadeIn">
+            <!--Este div le da el espacio cuando el contenido quiere ser ocultado-->
+            <div id="spacer-div" style="min-height: 60vh;" hidden>
+                <div class="row">
+                    <div class="col-md-12 py-0 text-center">
+                        <img src="/img/no_order.png" alt="" class="mx-auto my-2" style="width: 25vw; height: 50vh;" />
+                    </div>
+                    <div class="col-md-12 text-center">
+                        <p style="font-size: 3rem;">Carrito Vacio</p>
+                    </div>
+                </div>
+            </div>
+            <!--todo el contenido es escondido hasta que se busca el carrito-->
+            <div id="content" hidden>
+                <!--Grid row-->
+                <div class="row">
+                    <!--Grid column-->
+                    <div class="col-md-12 mb-4">
+            
+                    <!-- Heading -->
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted">Tu Carrito</span>
+                        <span id="cantidad_productos_pedidos" class="badge badge-secondary badge-pill">3</span>
+                    </h4>
+            
+                    <!-- Cart -->
+                    <ul id="carrito" class="list-group mb-3 z-depth-1">
+                        <div id="pedidos_elements"></div>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Total (MX)</span>
+                            <strong id="total_precio"></strong>
+                        </li>
+                    </ul>
+                    <!-- Cart -->
+            
+                    <!-- Promo code -->
+                    <div class="offset-md-8 col-md-4">
+                        <button class="btn btn-secondary btn-md waves-effect m-0 w-100" onclick="parent.location='/Pago'"  type="button">Proceder A Pagar</button>
+                    </div>
+                    <!-- Promo code -->
+            
+                    </div>
+                    <!--Grid column-->
+            
+                </div>
+                <!--Grid row-->
+            </div>
+        </div>
+      </main>
+      <!-- Flexbox container for aligning the toasts -->
+      <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+            <!-- Then put toasts within -->
+            <div class="toast" role="alert" aria-live="assertive" data-delay="2500" aria-atomic="true" style="position: fixed; top: 70vh; right: 40vw;z-index: 1;">
+                <div class="toast-header">
+                <img src="..." class="rounded mr-2" alt="...">
+                <strong id="titulo_toast" class="mr-auto" style="color:whitesmoke;font-size: 1.5rem;"></strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div id="texto_toast" class="toast-body"></div>
+            </div>
+        </div>
+      <!--Main layout-->
+        <% include ../partials/footer %>    
+        <script>
+            $(document).ready(function() {
+                if (sessionStorage.getItem('SesionCarrito') != null) {
+                    ObtenerCarrito(sessionStorage.getItem('SesionCarrito'));
+                } else {
+                    $('#spacer-div').removeAttr('hidden');
+                    $('#content').attr('hidden', 'true');
+                }
+            });
+            function ObtenerCarrito(id) {
+                console.log(id);
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        data = JSON.parse(this.responseText);
+                        $('#pedidos_elements').empty();
+                        let total = 0;
+                        console.log(data);
+                        data.forEach( arr => {
+                            total += arr['producto'].PrecioActual;
+                            elemento = '<li id="elemento'+data.indexOf(arr)+'" class="list-group-item d-flex justify-content-between lh-condensed">';
+                            elemento += '<div><h6 id="nombre'+data.indexOf(arr)+'" class="my-0">'+arr['producto'].Nombre+'</h6><small id="descripcion'+data.indexOf(arr)+'" class="text-muted">';
+                            elemento += arr['producto'].Descripcion+'</small></div><span><button id="btn_cancelar'+data.indexOf(arr)+'" style="background-color: tomato!important;opacity: 0" class="btn btn-secondary btn-md waves-effect m-0 w-100"  type="button">Cancelar</button></span><span id="precio'+data.indexOf(arr)+'" class="text-muted">$'+arr['producto'].PrecioActual+'</span></li>';
+                            $('#pedidos_elements').append(elemento);
+                            $('#elemento'+data.indexOf(arr)).hover( hover => {
+                                // se quitan las clases
+                                $('#elemento'+data.indexOf(arr)).removeClass('paint-out');
+                                $('#nombre'+data.indexOf(arr)).removeClass('paint-out');
+                                $('#precio'+data.indexOf(arr)).removeClass('paint-out');
+                                $('#descripcion'+data.indexOf(arr)).removeClass('paint-out');
+                                $('#btn_cancelar'+data.indexOf(arr)).removeClass('fade-out');
+                                // se ponen las clases
+                                $('#elemento'+data.indexOf(arr)).addClass('paint-in');
+                                $('#nombre'+data.indexOf(arr)).addClass('paint-in');
+                                $('#precio'+data.indexOf(arr)).addClass('paint-in'); 
+                                $('#precio'+data.indexOf(arr)).removeClass('text-muted');
+                                $('#descripcion'+data.indexOf(arr)).addClass('paint-in'); 
+                                $('#descripcion'+data.indexOf(arr)).removeClass('text-muted'); 
+                                $('#btn_cancelar'+data.indexOf(arr)).addClass('fade-in'); 
+                            }, unhover => {
+                                $('#elemento'+data.indexOf(arr)).removeClass('paint-in');
+                                $('#nombre'+data.indexOf(arr)).removeClass('paint-in');
+                                $('#precio'+data.indexOf(arr)).removeClass('paint-in');
+                                $('#descripcion'+data.indexOf(arr)).removeClass('paint-in');
+                                $('#btn_cancelar'+data.indexOf(arr)).removeClass('fade-in');
+                                // se ponen las clases
+                                $('#elemento'+data.indexOf(arr)).addClass('paint-out');
+                                $('#nombre'+data.indexOf(arr)).addClass('paint-out');
+                                $('#precio'+data.indexOf(arr)).addClass('paint-out');
+                                $('#precio'+data.indexOf(arr)).addClass('text-muted');
+                                $('#descripcion'+data.indexOf(arr)).addClass('paint-out');
+                                $('#descripcion'+data.indexOf(arr)).addClass('text-muted'); 
+                                $('#btn_cancelar'+data.indexOf(arr)).addClass('fade-out');
+                            });
+                            $('#btn_cancelar'+data.indexOf(arr)).click( function() {
+                                $.ajax({
+                                    url: '/EliminarPedido/'+arr['id_pedido'],
+                                    type: 'DELETE',
+                                    success: function(res, status) {
+                                        if (status == 'success') {
+                                            console.log(res);
+                                            $('#total_precio').text('$'+(parseFloat($('#total_precio').text().split('$')[1]) - arr['producto'].PrecioActual));
+                                            $('#cantidad_productos_pedidos').text(parseInt($('#cantidad_productos_pedidos').text()) - 1);
+                                            $('#elemento'+data.indexOf(arr)).remove();
+                                            if ($('#pedidos_elements').children().length == 0) {
+                                                $('#content').fadeOut(1000, function() {
+                                                    $('#content').attr('hidden', 'true');
+                                                    $('#spacer-div').removeAttr('hidden');
+                                                    $('#spacer-div').css('display', 'none');
+                                                    $('#spacer-div').fadeIn(1000); 
+                                                });
+                                            }
+                                        }
+                                    }
+                                })
+                            });
+                        });
+                        $('#total_precio').text('$'+total);
+                        $('#cantidad_productos_pedidos').text(data.length);
+                        $('#spacer-div').attr('hidden', 'true');
+                        $('#content').removeAttr('hidden');
+                        $('#content').css('display', 'none');
+                        $('#content').fadeIn(1000);
+                    } else {
+                        if (this.readyState == 4 && this.status == 404) {
+                            $('#spacer-div').removeAttr('hidden');
+                            $('#content').attr('hidden', 'true');
+                            $('#spacer-div').css('display', 'none');
+                            $('#spacer-div').fadeIn(1000);
+                        }
+                    }
+                };
+                xhttp.open("GET", '/ObtenerCarrito/'+id, true);
+                xhttp.send();
+            }
+        
+        </script>    
+    </body>
+</html>

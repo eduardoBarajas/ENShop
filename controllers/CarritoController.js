@@ -1,8 +1,8 @@
 var mongoose = require('mongoose')
 var UUID = require('uuid-js');
 const ModeloCarritos = require('../models/CarritoModel');
-const ModeloPedidos = require('../models/PedidoModel');
-const ModeloProductos = require('../models/ProductoModel');
+const ModeloPedidos = require('../models/OrderModel');
+const ModeloProductos = require('../models/ProductModel');
 
 module.exports.controller = function(app) {
   

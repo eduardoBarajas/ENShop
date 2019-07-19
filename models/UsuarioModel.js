@@ -7,6 +7,7 @@ var Schema = mongoose.Schema;
 var UsuarioSchema = new Schema({
     _id: { type: String },
     Nombre: String,
+    NombreNormalized: String,
     Apellidos: String,
     CorreoElectronico: String,
     Direccion: String,
@@ -18,6 +19,6 @@ var UsuarioSchema = new Schema({
 });
 
 // compilar modelo desde schema
-var ModeloUsuario = mongoose.model('ModeloUsuario', UsuarioSchema);
+var ModeloUsuario = mongoose.model('Usuarios', UsuarioSchema);
 
 module.exports = ModeloUsuario;

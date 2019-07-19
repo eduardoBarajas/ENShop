@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx">
+<% include ../partials/head %>
+<% include ../partials/navbar %>
+<script>
+    document.getElementById('carrito-id').remove();
+</script>
+    <body>
+    <!--Main layout-->
+    <main class="mt-5 pt-4">
+        <div class="container wow fadeIn">
+            <!--Este div le da el espacio cuando el contenido quiere ser ocultado-->
+            <div id="spacer-div" style="min-height: 100vh;"></div>
+            <!--todo el contenido es escondido hasta que se busca el carrito-->
+            <div id="content" hidden>
+                <!-- Heading -->
+                <h2 class="my-5 h2 text-center">Finalizar Compra</h2>
+                <!--Grid row-->
+                <div class="row">
+                    <!--Grid column-->
+                    <div class="col-md-8 mb-4">
+                    <!--Card-->
+                    <div class="card">
+                        <!--Card content-->
+                        <form class="card-body">
+                        <!--Grid row-->
+                        <div class="row">
+                            <!--Grid column-->
+                            <div class="col-md-6 mb-2">
+                            <!--firstName-->
+                            <div class="md-form ">
+                                <input type="text" id="firstName" class="form-control">
+                                <label for="firstName" class="">Primer Nombre</label>
+                            </div>
+                            </div>
+                            <!--Grid column-->
+                            <!--Grid column-->
+                            <div class="col-md-6 mb-2">
+                            <!--lastName-->
+                            <div class="md-form">
+                                <input type="text" id="lastName" class="form-control">
+                                <label for="lastName" class="">Apellidos</label>
+                            </div>
+            
+                            </div>
+                            <!--Grid column-->
+            
+                        </div>
+                        <!--Grid row-->
+            
+                        <!--email-->
+                        <div class="md-form mb-5">
+                            <input type="text" id="email" class="form-control" placeholder="youremail@example.com">
+                            <label for="email" class="">Correo</label>
+                        </div>
+            
+                        <!--address-->
+                        <div class="md-form mb-5">
+                            <input type="text" id="address" class="form-control" placeholder="1234 Main St">
+                            <label for="address" class="">Direccion</label>
+                        </div>
+            
+                        <!--address-2-->
+                        <div class="md-form mb-5">
+                            <input type="text" id="address-2" class="form-control" placeholder="Apartment or suite">
+                            <label for="address-2" class="">Direccion 2 (opcional)</label>
+                        </div>
+            
+                        <!--Grid row-->
+                        <div class="row">
+            
+                            <!--Grid column-->
+                            <div class="col-6 col-md-6 mb-4">
+                                <label for="country">Mexico, Baja California</label>
+                            </div>
+                            <!--Grid column-->
+                            <!--Grid column-->
+                            <div class="col-4 col-md-4 mb-4">
+            
+                                <label for="zip">Codigo Postal</label>
+                                <input type="text" class="form-control" id="zip" placeholder="" required>
+                                <div class="invalid-feedback">
+                                    Codigo Postal Requerido.
+                                </div>
+                
+                            </div>
+                            <!--Grid column-->
+            
+                        </div>
+                        <!--Grid row-->
+            
+                        <hr>
+            
+                        <div class="d-block my-3">
+                            <div class="custom-control custom-radio">
+                            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
+                            <label class="custom-control-label" for="credit">Credit card</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
+                            <label class="custom-control-label" for="debit">Debit card</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                            <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input" required>
+                            <label class="custom-control-label" for="paypal">Paypal</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                            <label for="cc-name">Name on card</label>
+                            <input type="text" class="form-control" id="cc-name" placeholder="" required>
+                            <small class="text-muted">Full name as displayed on card</small>
+                            <div class="invalid-feedback">
+                                Name on card is required
+                            </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                            <label for="cc-number">Credit card number</label>
+                            <input type="text" class="form-control" id="cc-number" placeholder="" required>
+                            <div class="invalid-feedback">
+                                Credit card number is required
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                            <label for="cc-expiration">Expiration</label>
+                            <input type="text" class="form-control" id="cc-expiration" placeholder="" required>
+                            <div class="invalid-feedback">
+                                Expiration date required
+                            </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                            <label for="cc-expiration">CVV</label>
+                            <input type="text" class="form-control" id="cc-cvv" placeholder="" required>
+                            <div class="invalid-feedback">
+                                Security code required
+                            </div>
+                            </div>
+                        </div>
+                        <hr class="mb-4">
+                        <button id="btnCompletar" class="btn btn-primary btn-lg btn-block" type="button">Finalizar Compra</button>
+            
+                        </form>
+            
+                    </div>
+                    <!--/.Card-->
+            
+                    </div>
+                    <!--Grid column-->
+            
+                    <!--Grid column-->
+                    <div class="col-md-4 mb-4">
+            
+                    <!-- Heading -->
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted">Tu Carrito</span>
+                        <span class="badge badge-secondary badge-pill">3</span>
+                    </h4>
+            
+                    <!-- Cart -->
+                    <ul id="carrito" class="list-group mb-3 z-depth-1">
+                        <li id="promo_code" class="list-group-item d-flex justify-content-between bg-light">
+                        <div class="text-success">
+                            <h6 class="my-0">Promo code</h6>
+                            <small>EXAMPLECODE</small>
+                        </div>
+                        <span class="text-success">-$5</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                        <span>Total (MXN)</span>
+                        <strong id="total_precio">$20</strong>
+                        </li>
+                    </ul>
+                    <!-- Cart -->
+            
+                    <!-- Promo code -->
+                    <form class="card p-2">
+                        <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Promo code" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary btn-md waves-effect m-0" type="button">Redeem</button>
+                        </div>
+                        </div>
+                    </form>
+                    <!-- Promo code -->
+            
+                    </div>
+                    <!--Grid column-->
+            
+                </div>
+                <!--Grid row-->
+            </div>
+        </div>
+      </main>
+      <!-- Flexbox container for aligning the toasts -->
+      <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+            <!-- Then put toasts within -->
+            <div class="toast" role="alert" aria-live="assertive" data-delay="2500" aria-atomic="true" style="position: fixed; top: 70vh; right: 40vw;z-index: 1;">
+                <div class="toast-header">
+                <img src="..." class="rounded mr-2" alt="...">
+                <strong id="titulo_toast" class="mr-auto" style="color:whitesmoke;font-size: 1.5rem;"></strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div id="texto_toast" class="toast-body"></div>
+            </div>
+        </div>
+      <!--Main layout-->
+        <% include ../partials/footer %>    
+        <script>
+            $(document).ready(function() {
+                if (sessionStorage.getItem('SesionCarrito') != null) {
+                    obtenerCarrito(sessionStorage.getItem('SesionCarrito'));
+                    $('#btnCompletar').click(e => {
+                        completarCompra(sessionStorage.getItem('SesionCarrito'));
+                    });
+                }
+            });
+            function completarCompra(id_carrito) {
+                $.ajax({
+                    url: '/GuardarCarrito',
+                    type: 'POST',
+                    data: {
+                        id: id_carrito,
+                        Nombre: $('#firstName').val(),
+                        Apellido: $('#lastName').val(),
+                        Correo: $('#email').val(),
+                        Direccion: $('#address').val(),
+                        Direccion2: $('#address-2').val(),
+                        CP: $('#zip').val()
+                    },
+                    success: function (datos, status) {
+                        $('#titulo_toast').text('Pedido');
+                        $('#texto_toast').text('Se agrego correctamente el pedido');
+                        $('.toast-header').css('background-color','indigo');
+                        $('.toast').toast('show');
+                        $('.toast').on('hidden.bs.toast', function () {
+                            sessionStorage.clear();
+                            window.location = "/";
+                        });
+                    }
+                });
+            }
+            function obtenerCarrito(id) {
+                console.log(id);
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        data = JSON.parse(this.responseText);
+                        let total = 0;
+                        console.log(data);
+                        data.forEach( arr => {
+                            total += arr['producto'].PrecioActual;
+                            elemento = '<li id="elemento'+data.indexOf(arr)+'" class="list-group-item d-flex justify-content-between lh-condensed">';
+                            elemento += '<div><h6 id="nombre'+data.indexOf(arr)+'" class="my-0">'+arr['producto'].Nombre+'</h6><small id="descripcion'+data.indexOf(arr)+'" class="text-muted">';
+                            elemento += arr['producto'].Descripcion+'</small></div><span><button id="btn_cancelar'+data.indexOf(arr)+'" style="background-color: tomato!important;opacity: 0" class="btn btn-secondary btn-md waves-effect m-0 w-100"  type="button">Cancelar</button></span><span id="precio'+data.indexOf(arr)+'" class="text-muted">$'+arr['producto'].PrecioActual+'</span></li>';
+                            $(elemento).insertBefore('#promo_code');
+                        });
+                        $('#total_precio').text('$'+total);
+                        $('#cantidad_productos_pedidos').text(data.length);
+                        $('#spacer-div').attr('hidden', 'true');
+                        $('#content').removeAttr('hidden');
+                        $('#content').css('display', 'none');
+                        $('#content').fadeIn(1000);
+                    }
+                };
+                xhttp.open("GET", '/ObtenerCarrito/'+id, true);
+                xhttp.send();
+            }
+        
+        </script>    
+    </body>
+</html>

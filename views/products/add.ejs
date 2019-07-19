@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx">
+  <% include ../partials/head %>
+  <style>
+    .background-btn {
+      background-color: #48AB3B!important;
+      color: whitesmoke;
+    }
+    .background-btn:hover {
+      background-color: tomato!important;
+      color: whitesmoke;
+    }
+    .lds-facebook {
+    display: inline-block;
+    position: relative;
+    width: 64px;
+    height: 64px;
+    }
+    .lds-facebook div {
+    display: inline-block;
+    position: absolute;
+    left: 6px;
+    width: 13px;
+    background: #43A047;
+    animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+    }
+    .lds-facebook div:nth-child(1) {
+        left: 6px;
+        animation-delay: -0.24s;
+    }
+    .lds-facebook div:nth-child(2) {
+        left: 26px;
+        animation-delay: -0.12s;
+    }
+    .lds-facebook div:nth-child(3) {
+        left: 45px;
+        animation-delay: 0;
+    }
+    @keyframes lds-facebook {
+        0% {
+            top: 6px;
+            height: 51px;
+        }
+        50%, 100% {
+            top: 19px;
+            height: 26px;
+        }
+    }
+  </style>
+  <% include ../partials/navbar %>
+  <script>
+    // Esconde el carrito del navbar
+    document.getElementById('carrito-id').remove();
+  </script>
+  <body>
+    <!--Main layout-->
+    <main class="mt-5 pt-4">
+        <div id="main-layout" class="container wow fadeIn">
+          <!-- Heading -->
+          <h2 class="my-5 h2 text-center">Agregar Nuevo Producto</h2>
+    
+          <!--Grid row-->
+          <div class="row">
+    
+            <!--Grid column-->
+            <div class="col-md-12 mb-4">
+    
+              <!--Card-->
+              <div class="card">
+    
+                <!--Card content-->
+                <form class="card-body">
+    
+                  <!--Grid row-->
+                  <div class="row">
+    
+                    <!--Grid column-->
+                    <div class="col-md-6 mb-2">
+    
+                      <!--Nombre-->
+                      <div class="md-form ">
+                        <input type="text" id="name" class="form-control">
+                        <label for="name" class="">Nombre</label>
+                      </div>
+                    </div>
+                    <!--Grid column-->
+    
+                    <!--Grid column-->
+                    <div class="col-md-6 mb-2">
+    
+                      <!--Descripcion-->
+                      <div class="md-form">
+                        <input type="text" id="description" class="form-control">
+                        <label for="description" class="">Descripcion</label>
+                      </div>
+    
+                    </div>
+                    <!--Grid column-->
+    
+                  </div>
+                  <!--Grid row-->
+    
+                  <div class="row">
+                    <!--Grid column-->
+                    <div class="col-lg-6 col-md-6 mb-4">
+        
+                        <label for="category">Categoria</label>
+                        <select class="custom-select d-block w-100" id="category" required>
+                            <option value="">Elige...</option>
+                            <option>Electronicos</option>
+                            <option>Ropa</option>
+                            <option>Electrodomesticos</option>
+                            <option>Calzado</option>
+                            <option>Varios</option>
+                        </select>
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <div class="col-lg-6 col-md-6 mb-4">
+        
+                        <label for="state">Estado</label>
+                        <select class="custom-select d-block w-100" id="state" required>
+                            <option value="">Elige...</option>
+                            <option>Nuevo</option>
+                            <option>SemiNuevo</option>
+                            <option>Usado</option>
+                        </select>
+                    </div>
+                    <!--Grid column-->
+                </div>
+                    
+                <div class="row">
+                  <!--Grid column-->
+                  <div class="col-md-5 mb-2">
+                    <!--PrecioOriginal-->
+                    <div class="md-form mb-5">
+                        <input type="number" id="originalPrice" class="form-control" placeholder="1250.00">
+                        <label for="originalPrice" class="">Precio Original</label>
+                    </div>
+                  </div>
+
+                  <!--Grid column-->
+                  <div class="col-md-5 mb-2">
+                    <!--PrecioActual-->
+                    <div class="md-form mb-5">
+                        <input type="number" id="currentPrice" class="form-control" placeholder="1250.00" required>
+                        <label for="currentPrice" class="">Precio Actual</label>
+                    </div>
+                  </div>
+
+                  <!--Grid column-->
+                  <div class="col-md-2 mb-2">
+                    <!--Cantidad-->
+                    <div class="md-form mb-5">
+                        <input type="number" id="availableStock" class="form-control" placeholder="1250" required>
+                        <label for="availableStock" class="">Cantidad</label>
+                    </div>
+                  </div>
+                </div>
+                  <!--InformacionAdicional-->
+                  <div class="md-form mb-5">
+                    <input type="text" id="aditionalInfo" class="form-control" placeholder="Que mas quieres mencionar del producto?">
+                    <label for="aditionalInfo" class="">Informacion Adicional</label>
+                  </div>
+                  <input class="my-2" type="file" id="input" accept="image/*">
+                  <div id="Imagenes" class="row"></div>
+                  <hr class="mb-4">
+                  <button class="btn btn-primary btn-lg btn-block" type="button" id="btnAgregar">Agregar Producto</button>
+                </form>
+              </div>
+              <!--/.Card-->
+            </div>
+            <!--Grid column-->
+          </div>
+          <!--Grid row-->
+        </div>
+        <!-- Flexbox container for aligning the toasts -->
+        <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+            <!-- Then put toasts within -->
+            <div class="toast" role="alert" aria-live="assertive" data-delay="2500" aria-atomic="true" style="position: fixed; top: 70vh; right: 40vw;z-index: 1;">
+                <div class="toast-header">
+                <img src="..." class="rounded mr-2" alt="...">
+                <strong id="titulo_toast" class="mr-auto" style="color:whitesmoke;font-size: 1.5rem;"></strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div id="texto_toast" class="toast-body"></div>
+            </div>
+        </div>
+      </main>
+      <!--Main layout-->
+    <% include ../partials/footer %>
+    <script>
+        var images = [undefined, undefined, undefined, undefined, undefined, undefined];
+        var images_links = [];
+        const ref = firebase.storage().ref();
+        $(document).ready(function(){
+            $("#btnAgregar").click(function(){
+              // se agrega el loader para mostrar que esta modificando
+              $('.card-body').append('<div class="row"><div class="col-md-12"><div id="loader" class="lds-facebook d-block mx-auto"><div></div><div></div><div></div></div></div></div>');
+              // Se utilizan dos contadores para determinar si la subida de imagenes finalizo en su totalidad.
+              var current_image_index = 0;
+              var total_images = 0;
+              // Se obtiene el numero de imagenes que fueron seleccionadas.
+              images.forEach( image => { if (image != undefined) total_images ++; });
+              images.forEach( image => {
+                if (image != undefined) {
+                  const task = ref.child(image.name).put(image);
+                  task.then((file) => {
+                    // una vez terminada la task se obtiene el link para acceder a la imagen.
+                    ref.child(image.name).getDownloadURL().then((link) => {
+                      // se debe obtener el link hasta la aparicion del simbolo de interrogacion para que funcione.
+                      images_links.push(link.substring(0, link.indexOf('?')));
+                      // una vez se almacene se incrementa el contador y si ya son todas se prosigue a almacenar el producto.
+                      current_image_index++;
+                      if (current_image_index === total_images) {
+                        saveProduct(images_links);
+                      }
+                    });  
+                  });
+                }
+              });   
+            });
+        });
+        const inputElement = document.getElementById("input");
+        inputElement.addEventListener("change", handleFiles, false);
+
+        function handleFiles() {
+            for (let x = 0; x < 6; x++) {
+                if (images[x] == undefined) {
+                  images[x] = this.files[0];
+                  $('#Imagenes').append('<a id="'+x+'" onclick="deleteImage(this)" class="background-btn btn btn-outline-white waves-effect waves-light" target="_blank" role="button">'+images[x].name+'</a>');
+                  $('#'+x).hover( e => {
+                    $('#'+x).text('Eliminar Imagen');
+                  }, e2 => {
+                    $('#'+x).text(images[x].name);
+                  });
+                  break;
+                }
+                if (x == 5) {
+                    alert('Ya eligiste el maximo de imagenes, elimina una antes de intentar subir otra');
+                }
+            }
+        }
+
+        function deleteImage(image) {
+            $('#'+image.id).remove();
+            images[image.id] = undefined;
+        }
+
+        function saveProduct(imagesLinks) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Aqui ya se termino la operacion
+                $('#loader').remove();
+                $('#titulo_toast').text('Operacion Exitosa');
+                $('#texto_toast').text('Se agrego el nuevo producto con exito');
+                $('.toast-header').css('background-color','green');
+                $('.toast').toast('show');
+                document.getElementById('description').value = '';
+                document.getElementById('name').value = '';
+                document.getElementById('category').value = '';
+                document.getElementById('state').value = '';
+                document.getElementById('currentPrice').value = '';
+                document.getElementById('originalPrice').value = '';
+                document.getElementById('availableStock').value = '';
+                document.getElementById('aditionalInfo').value = '';
+                images_links = [];
+                images = [undefined, undefined, undefined, undefined, undefined, undefined];
+                document.getElementById("input").value = '';
+                $('#Imagenes').empty();
+                $('.toast').on('hidden.bs.toast', function () {
+                    window.scroll({
+                        top: 0, 
+                        left: 0, 
+                        behavior: 'smooth'
+                    });
+                    setTimeout(function() {
+                        document.getElementById('name').focus();
+                    }, 750);
+                });
+            } else {
+                if (this.readyState === 4) {
+                    // hubo un error
+                    $('#titulo_toast').text('Ocurrio Un Error');
+                    $('#titulo_toast').text('No se pudo agregar correctamente el producto, vuelve a intentarlo');
+                    $('.toast-header').css('background-color','red');
+                    $('.toast').toast('show');
+                }
+            }
+        };
+        xhttp.open('POST', '/Products/Save', true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        var productImages = [];
+        imagesLinks.forEach( image => {
+          productImages.push(image += '?alt=media');
+        });
+        var name = document.getElementById('name').value;
+        var description = document.getElementById('description').value;
+        var category = document.getElementById('category').value;
+        var state = document.getElementById('state').value;
+        var currentPrice = document.getElementById('currentPrice').value;
+        var originalPrice = document.getElementById('originalPrice').value;
+        var availableStock = document.getElementById('availableStock').value;
+        var aditionalInfo = document.getElementById('aditionalInfo').value;
+        var data = "availableStock="+availableStock+'&name='+name+'&description='+description+'&category='+
+          category+'&state='+state+'&currentPrice='+currentPrice+'&originalPrice='+originalPrice+
+          '&aditionalInfo='+aditionalInfo+'&images='+productImages;
+        xhttp.send(data);
+      }
+    </script>
+  </body>
+</html>
