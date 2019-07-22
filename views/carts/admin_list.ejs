@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx">
+<% include ../partials/head %>
+<% include ../partials/navbar %>
+<script>
+    document.getElementById('carrito-id').remove();
+</script>
+    <body>
+    <!--Main layout-->
+    <main class="mt-5 pt-4">
+        <div class="container wow fadeIn">
+            <!--Este div le da el espacio cuando el contenido quiere ser ocultado-->
+            <div id="spacer-div" style="min-height: 50vh;">
+                <div class="row">
+                    <div class="col-md-12 py-0 my-4">
+                        <img src="/img/svg/pedidos.svg" alt="" class="mx-auto my-2" style="width: 100%; height: 40vh;" />
+                    </div>
+                    <div class="col-md-12 text-center">
+                        <p style="font-size: 3rem;">No Hay Pedidos</p>
+                    </div>
+                </div>
+            </div>
+            <!--todo el contenido es escondido hasta que se busca el carrito-->
+            <div id="content" hidden>
+                <div class="row">
+                    <!--Grid column-->
+                    <div class="col-md-12 mb-4">
+                        <!-- Heading -->
+                        <h4 class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted">Todos Los Pedidos Realizados</span>
+                            <span><button onclick="cleanOrders()" class="btn btn-primary btn-md btn-block" type="button">Limpiar Pedidos Incompletos</button></span>
+                        </h4>
+                        <ul id="pedidos_list" class="list-group">
+                        </ul>
+                    </div>
+                    <!--Grid column-->
+                </div>
+                <!--Grid row-->
+            </div>
+        </div>
+      </main>
+      <div class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: tomato;color: whitesmoke;">
+                        <h5 class="modal-title">Modificar Pedido</h5>
+                        <button id="btn_cerrar_modal" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="texto_modal"> Estas seguro que quieres modificar este producto? </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btn_modal_si" type="button" class="btn btn-primary">Si</button>
+                        <button id="btn_modal_no" type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: tomato!important;">No</button>
+                    </div>
+                </div>
+            </div>
+      </div>
+      <!-- Flexbox container for aligning the toasts -->
+      <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+            <!-- Then put toasts within -->
+            <div class="toast" role="alert" aria-live="assertive" data-delay="2500" aria-atomic="true" style="position: fixed; top: 70vh; right: 40vw;z-index: 1;">
+                <div class="toast-header">
+                <!--<img src="..." class="rounded mr-2" alt="...">-->
+                <strong id="titulo_toast" class="mr-auto" style="color:whitesmoke;font-size: 1.5rem;"></strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div id="texto_toast" class="toast-body"></div>
+            </div>
+        </div>
+      <!--Main layout-->
+        <% include ../partials/footer %>    
+        <script>
+            var operation = {operation: '', id: ''};
+            getCarts();
+            function getCarts() {
+                $.ajax({
+                    url: '/Carts/GetAll',
+                    type: 'GET',
+                    success: function (data, status) {
+                        if (status !== 'nocontent') {
+                            $('#pedidos_elements').empty();
+                            $('#btn_modal_no').click(e=> {$('.modal').hide();});
+                            $('#btn_cerrar_modal').click(e=> {$('.modal').hide();});
+                            $('#btn_modal_si').click(e=> {
+                                if (operation.operation === 'marcar_como') {
+                                    $.ajax({
+                                    url: '/Carts/Update/'+data[operation.id]._id,
+                                    type: 'PUT',
+                                    data: {
+                                        state: $('#texto_modal').text().split(':')[1]
+                                    },
+                                    success: function(actualizado, status) {
+                                        if (status !== 'nocontent') {
+                                            $('#estado_pedido_'+operation.id).text($('#texto_modal').text().split(':')[1]);
+                                            if ($('#texto_modal').text().split(':')[1] === 'COMPLETADO') {
+                                                $('#col-btn-marcar').remove();
+                                            } else {
+                                                $('#btnMarcar'+operation.id).text('MARCAR COMO '+getNextState(getCurrentState($('#texto_modal').text().split(':')[1])));
+                                            }
+                                        } else {
+                                            $('#titulo_toast').text('Pedido');
+                                            $('#texto_toast').text('No se pudo modificar el pedido');
+                                            $('.toast-header').css('background-color','tomato');
+                                            $('.toast').toast('show');
+                                        }   
+                                    }
+                                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                                        if (jqXHR.status === 0 || jqXHR.status == 500) {
+                                            $('#titulo_toast').text('Error De Conexion');
+                                            $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
+                                            $('.toast-header').css('background-color', 'tomato');
+                                            $('.toast').toast('show');
+                                        }
+                                    });
+                                } 
+                                if (operation.operation === 'cancelar') {
+                                    $.ajax({
+                                        url: '/Carts/Delete/'+data[operation.id]._id,
+                                        type: 'DELETE',
+                                        success: function(data, status) {
+                                            if (status !== 'nocontent') {
+                                                $('#pedido_item_'+operation.id).fadeOut(1000, function( ){
+                                                    $('#pedido_item_'+operation.id).remove();
+                                                });
+                                                $('#collapsePedido'+operation.id).fadeOut(1000, function () {
+                                                    $('#collapsePedido'+operation.id).remove();
+                                                });
+                                            } else {
+                                                $('#titulo_toast').text('Pedido');
+                                                $('#texto_toast').text('No se pudo modificar el pedido');
+                                                $('.toast-header').css('background-color','tomato');
+                                                $('.toast').toast('show');
+                                            }
+                                        }
+                                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                                        if (jqXHR.status === 0 || jqXHR.status == 500) {
+                                            $('#titulo_toast').text('Error De Conexion');
+                                            $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
+                                            $('.toast-header').css('background-color', 'tomato');
+                                            $('.toast').toast('show');
+                                        }
+                                    });
+                                }
+                                $('.modal').hide();
+                            });
+                            data.forEach( cart => {
+                                let node = '<a id="pedido_item_'+data.indexOf(cart)+'" data-toggle="collapse" href="#collapsePedido'+data.indexOf(cart)+'" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">'+
+                                    '<div class="flex-column">Cliente: '+cart.name+' '+cart.lastNames+'<p><small>Direccion Envio: '+cart.address+', '+cart.address2+', '+cart.cp+', Ensenada, B.C.'+'</small></p><span id="estado_pedido_'+data.indexOf(cart)+'" class="badge badge-primary badge-pill">'+getState(cart)+'</span></div>';                
+                                let collapse_node = '<div class="collapse" id="collapsePedido'+data.indexOf(cart)+'"><div class="card card-body">'+
+                                    '<ul class="list-group list-group-horizontal">';    
+                                let total = 0;
+                                $.ajax({
+                                    url: '/Orders/All/idCart/'+cart._id,
+                                    type: 'GET',
+                                    success: function(res, status) {
+                                        if (status !== 'nocontent') {
+                                            res.forEach( order => {
+                                                $.ajax({
+                                                    url: '/Products/id/' + order.idProduct,
+                                                    type: 'GET',
+                                                    success: function(product, status) {
+                                                        if (status !== 'nocontent') {
+                                                            console.log(product);
+                                                            total += (product.currentPrice*order.quantity);
+                                                            collapse_node += '<li class="list-group-item" style="color: tomato">'+order.quantity.toString()+' x '+product.name+ '     Precio(c/u) $' +order.unitaryPrice+'</li>';
+                                                            if (res.length === res.indexOf(order)+1) {
+                                                                if (!cart.completed) {
+                                                                    collapse_node += '</ul><div class="row my-3"><div id="col-btn-marcar" class="col-md-4"><button id="btnMarcar'+data.indexOf(cart)+'" onclick="markOrder(this)" class="btn btn-success btn-md btn-block" type="button">Marcar Como '+getNextState(cart)+'</button>'+
+                                                                    '</div><div class="col-md-4"><button id="btnCancelar'+data.indexOf(cart)+'" onclick="cancelOrder(this)" class="btn btn-danger btn-md btn-block" type="button">Cancelar Pedido</button></div></div></div></div>';
+                                                                } else {
+                                                                    collapse_node += '</ul><div class="row my-3"><div class="col-md-4"><button id="btnCancelar'+data.indexOf(cart)+'" onclick="cancelOrder(this)" class="btn btn-danger btn-md btn-block" type="button">Cancelar Pedido</button></div></div></div></div>';
+                                                                }
+                                                                node += '<div class="flex-column">Total: '+total+'</div></div></a>';
+                                                                $('#pedidos_list').append(node+collapse_node);
+                                                            }
+                                                        } else {
+                                                            $('#titulo_toast').text('Error Producto');
+                                                            $('#texto_toast').text('No se pudo obtener el producto, intenta recargar la pagina.');
+                                                            $('.toast-header').css('background-color','tomato');
+                                                            $('.toast').toast('show');
+                                                        }
+                                                    }
+                                                }).fail(function (jqXHR, textStatus, errorThrown) {
+                                                    if (jqXHR.status === 0 || jqXHR.status == 500) {
+                                                        $('#titulo_toast').text('Error De Conexion');
+                                                        $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
+                                                        $('.toast-header').css('background-color', 'tomato');
+                                                        $('.toast').toast('show');
+                                                    }
+                                                });
+                                            });
+                                        } else {
+                                            $('#titulo_toast').text('Error Pedidos');
+                                            $('#texto_toast').text('No se pudieron obtener los pedidos, intenta recargar la pagina.');
+                                            $('.toast-header').css('background-color','tomato');
+                                            $('.toast').toast('show');
+                                        }
+                                    }
+                                }).fail(function (jqXHR, textStatus, errorThrown) {
+                                    if (jqXHR.status === 0 || jqXHR.status == 500) {
+                                        $('#titulo_toast').text('Error De Conexion');
+                                        $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
+                                        $('.toast-header').css('background-color', 'tomato');
+                                        $('.toast').toast('show');
+                                    }
+                                });
+                            });
+                            $('#spacer-div').attr('hidden', 'true');
+                            $('#content').removeAttr('hidden');
+                            $('#titulo_toast').text('Pedido');
+                            $('#texto_toast').text('Se encontraron los pedidos con exito');
+                            $('.toast-header').css('background-color','green');
+                            $('.toast').toast('show');
+                        } else {
+                            $('#spacer-div').removeAttr('hidden');
+                            $('#content').attr('hidden', 'true');
+                            $('#titulo_toast').text('Pedido');
+                            $('#texto_toast').text('No se encontraron pedidos');
+                            $('.toast-header').css('background-color','tomato');
+                            $('.toast').toast('show');
+                        }    
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status === 0 || jqXHR.status == 500) {
+                        $('#titulo_toast').text('Error De Conexion');
+                        $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
+                        $('.toast-header').css('background-color', 'tomato');
+                        $('.toast').toast('show');
+                    }
+                });
+            }
+
+            function getState(state) {
+                if (state.completed) {
+                    return 'COMPLETADO';
+                } else{
+                    if (state.delivered) {
+                        return 'ENVIADO';
+                    } else {
+                        if (state.payed) {
+                            return 'PAGADO';
+                        } else {
+                            return 'COLOCADO';
+                        }
+                    }
+                }
+            }
+
+            function getNextState(state) {
+                if (state.sent && !state.payed)
+                    return 'PAGADO';
+                if (state.payed && !state.delivered)
+                    return 'ENVIADO';
+                if (state.delivered && !state.completed)
+                    return 'COMPLETADO';
+            }
+            function cancelOrder(event) {
+                console.log(event.id);
+                $('#texto_modal').text('Seguro que quieres cancelar este pedido? Se debera realizar una devolucion del pago');
+                operation.operation = 'cancelar';
+                operation.id = event.id.split('btnCancelar')[1];
+                $('.modal').show();
+            }
+
+            function getCurrentState(estado) {
+                let state = {payed: false, delivered: false, completed: false, sent: false};
+                switch (estado) {
+                    case 'PAGADO': state.payed = true;break;
+                    case 'ENVIADO': state.delivered = true;break;
+                    case 'COMPLETADO': state.completed = true;break;
+                    case 'COLOCADO': state.sent = true;break;
+                }
+                return state;
+            }
+
+            function markOrder(event) {
+                operation.id = event.id.split('btnMarcar')[1];
+                $('#texto_modal').text('Seguro que quieres marcarlo como:'+getNextState(getCurrentState($('#estado_pedido_'+operation.id).text())));
+                operation.operation = 'marcar_como';
+                $('.modal').show();
+            }
+
+            function cleanOrders() {
+                $.ajax({
+                    url: '/Carts/Admin/Clean',
+                    type: 'GET',
+                    success: function (data, status) {
+                        if (status !== 'nocontent') {
+                            $('#titulo_toast').text('Limpieza Finalizada');
+                            $('#texto_toast').text('Se han eliminado todos los pedidos sin pagar');
+                            $('.toast-header').css('background-color','green');
+                            $('.toast').toast('show');
+                        } else {
+                            $('#titulo_toast').text('Error con la limpieza');
+                            $('#texto_toast').text('Ocurrio un problema al eliminar los pedidos, intentalo de nuevo.');
+                            $('.toast-header').css('background-color','tomato');
+                            $('.toast').toast('show');
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status === 0 || jqXHR.status == 500) {
+                        $('#titulo_toast').text('Error De Conexion');
+                        $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
+                        $('.toast-header').css('background-color', 'tomato');
+                        $('.toast').toast('show');
+                    }
+                });
+            }
+        </script>    
+    </body>
+</html>

@@ -211,63 +211,94 @@
         <% include ../partials/footer %>    
         <script>
             $(document).ready(function() {
-                if (sessionStorage.getItem('SesionCarrito') != null) {
-                    obtenerCarrito(sessionStorage.getItem('SesionCarrito'));
+                if (sessionStorage.getItem('CartSession') != null) {
+                    getCart(sessionStorage.getItem('CartSession'));
                     $('#btnCompletar').click(e => {
-                        completarCompra(sessionStorage.getItem('SesionCarrito'));
+                        saveCart(sessionStorage.getItem('CartSession'));
                     });
                 }
             });
-            function completarCompra(id_carrito) {
+
+            function saveCart(idCart) {
+                let idUser = 'Invitado';
+                if (localStorage.getItem('userSession') != null) {
+                    idUser = JSON.parse(localStorage.getItem('userSession'))['idUser'];
+                }
                 $.ajax({
-                    url: '/GuardarCarrito',
+                    url: '/Carts/Save',
                     type: 'POST',
                     data: {
-                        id: id_carrito,
-                        Nombre: $('#firstName').val(),
-                        Apellido: $('#lastName').val(),
-                        Correo: $('#email').val(),
-                        Direccion: $('#address').val(),
-                        Direccion2: $('#address-2').val(),
-                        CP: $('#zip').val()
+                        id: idCart,
+                        idUser: idUser,
+                        name: $('#firstName').val(),
+                        lastNames: $('#lastName').val(),
+                        email: $('#email').val(),
+                        address: $('#address').val(),
+                        address2: $('#address-2').val(),
+                        cp: $('#zip').val()
                     },
                     success: function (datos, status) {
-                        $('#titulo_toast').text('Pedido');
-                        $('#texto_toast').text('Se agrego correctamente el pedido');
-                        $('.toast-header').css('background-color','indigo');
+                        if (status !== 'nocontent') {
+                            $('#titulo_toast').text('Pedido');
+                            $('#texto_toast').text('Se agrego correctamente el pedido');
+                            $('.toast-header').css('background-color','indigo');
+                            $('.toast').toast('show');
+                            $('.toast').on('hidden.bs.toast', function () {
+                                sessionStorage.clear();
+                                window.location = "/";
+                            });
+                        } else {
+                            $('#titulo_toast').text('Pedido');
+                            $('#texto_toast').text('Ocurrio un problema al agregar el pedido, intenta de nuevo');
+                            $('.toast-header').css('background-color','indigo');
+                            $('.toast').toast('show');
+                        }
+                    }
+                }).fail(function( jqXHR, textStatus, errorThrown ) {
+                    if (jqXHR.status === 0 || jqXHR.status == 500) {
+                        $('#titulo_toast').text('Error De Conexion');
+                        $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
+                        $('.toast-header').css('background-color','tomato');
                         $('.toast').toast('show');
-                        $('.toast').on('hidden.bs.toast', function () {
-                            sessionStorage.clear();
-                            window.location = "/";
-                        });
                     }
                 });
             }
-            function obtenerCarrito(id) {
-                console.log(id);
-                var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        data = JSON.parse(this.responseText);
-                        let total = 0;
-                        console.log(data);
-                        data.forEach( arr => {
-                            total += arr['producto'].PrecioActual;
-                            elemento = '<li id="elemento'+data.indexOf(arr)+'" class="list-group-item d-flex justify-content-between lh-condensed">';
-                            elemento += '<div><h6 id="nombre'+data.indexOf(arr)+'" class="my-0">'+arr['producto'].Nombre+'</h6><small id="descripcion'+data.indexOf(arr)+'" class="text-muted">';
-                            elemento += arr['producto'].Descripcion+'</small></div><span><button id="btn_cancelar'+data.indexOf(arr)+'" style="background-color: tomato!important;opacity: 0" class="btn btn-secondary btn-md waves-effect m-0 w-100"  type="button">Cancelar</button></span><span id="precio'+data.indexOf(arr)+'" class="text-muted">$'+arr['producto'].PrecioActual+'</span></li>';
-                            $(elemento).insertBefore('#promo_code');
-                        });
-                        $('#total_precio').text('$'+total);
-                        $('#cantidad_productos_pedidos').text(data.length);
-                        $('#spacer-div').attr('hidden', 'true');
-                        $('#content').removeAttr('hidden');
-                        $('#content').css('display', 'none');
-                        $('#content').fadeIn(1000);
+            function getCart(id) {
+                $.ajax({
+                    url: '/Carts/GetOrders/Cart/' + id,
+                    type: 'GET',
+                    success: function(data, status) {
+                        if (status !== 'nocontent') {
+                            let total = 0;
+                            console.log(data);
+                            data.forEach( arr => {
+                                total += arr['product'].currentPrice;
+                                element = '<li id="element'+data.indexOf(arr)+'" class="list-group-item d-flex justify-content-between lh-condensed">';
+                                element += '<div><h6 id="nombre'+data.indexOf(arr)+'" class="my-0">'+arr['product'].name+'</h6><small id="descripcion'+data.indexOf(arr)+'" class="text-muted">';
+                                element += arr['product'].description+'</small></div><span><button id="btn_cancelar'+data.indexOf(arr)+'" style="background-color: tomato!important;opacity: 0" class="btn btn-secondary btn-md waves-effect m-0 w-100"  type="button">Cancelar</button></span><span id="precio'+data.indexOf(arr)+'" class="text-muted">$'+arr['product'].currentPrice+'</span></li>';
+                                $(element).insertBefore('#promo_code');
+                            });
+                            $('#total_precio').text('$'+total);
+                            $('#cantidad_products_pedidos').text(data.length);
+                            $('#spacer-div').attr('hidden', 'true');
+                            $('#content').removeAttr('hidden');
+                            $('#content').css('display', 'none');
+                            $('#content').fadeIn(1000);
+                        } else {
+                            $('#titulo_toast').text('Error Con El Carrito');
+                            $('#texto_toast').text('Hubo un problema al obtener los pedidos por favor intenta de nuevo. ');
+                            $('.toast-header').css('background-color','tomato');
+                            $('.toast').toast('show');
+                        }
                     }
-                };
-                xhttp.open("GET", '/ObtenerCarrito/'+id, true);
-                xhttp.send();
+                }).fail(function( jqXHR, textStatus, errorThrown ) {
+                    if (jqXHR.status === 0 || jqXHR.status == 500) {
+                        $('#titulo_toast').text('Error De Conexion');
+                        $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
+                        $('.toast-header').css('background-color','tomato');
+                        $('.toast').toast('show');
+                    }
+                });
             }
         
         </script>    
