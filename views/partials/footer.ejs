@@ -31,17 +31,35 @@
         new WOW().init();
     </script>
     <script>
+        if (window.location.href.includes('?'))
+            window.history.replaceState(null, '', window.location.href.split('?')[0]);
         if ($(document).ready(function() {
-            if (sessionStorage.getItem('SesionCarrito') != null) {
-                $.get('/Pedidos/'+sessionStorage.getItem('SesionCarrito'), function(data, status) {
-                    if (status == 'success') {
-                        $('#carrito_badge').text(parseInt(data));           
+            if (sessionStorage.getItem('CartSession') != null) {
+                $.ajax({
+                    url: '/Carts/idCart/' + sessionStorage.getItem('CartSession'),
+                    type: 'GET',
+                    success: function (data, status) {
+                        if (status !== 'nocontent') {
+                            $('#carrito_badge').text(parseInt(data));    
+                        } else {
+                            $('#carrito_badge').text('0');  
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status === 0 || jqXHR.status == 500) {
+                        $('#carrito_badge').text('0');
+                        console.log('Error 500 fallo el servidor', errorThrown);
                     }
                 });
             } else {
                 $('#carrito_badge').text('0');
             }
         }));
+        function adminClick(route) {
+            if (localStorage.getItem('userSession')!== null) {
+                parent.location = `/Admin/${route}?token=${JSON.parse(localStorage.getItem('userSession'))['token']}`;
+            }
+        }
     </script>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-app.js"></script>

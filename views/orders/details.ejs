@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx">
+<% include ../partials/head %>
+<% include ../partials/navbar %>
+
+<body>
+    <!--Main layout-->
+    <main class="mt-5 pt-4">
+        <div class="container wow fadeIn">
+            <!--todo el contenido es escondido hasta que se busca el carrito-->
+            <div id="content">
+                <div class="row">
+                    <!--Grid column-->
+                    <div class="col-md-12 mb-4">
+
+                        <!-- Heading -->
+                        <h4 class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted">Tus Pedidos</span>
+                            <span id="cantidad_productos_pedidos" class="badge badge-secondary badge-pill">3</span>
+                        </h4>
+
+                        <!-- Cart -->
+                        <ul id="carrito" class="list-group mb-3 z-depth-1">
+                            <div id="pedidos_elements"></div>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Total (MX)</span>
+                                <strong id="total_precio"></strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-start">
+                                <span>Datos De Envio:</span>
+                                <strong class="mx-2" id="datos_envio"></strong>
+                            </li>
+                        </ul>
+                        <div class="row">
+                            <div class="col-12 col-md-2 px-0 text-center">
+                                <span style="font-size: 1.2rem;">Estado Actual Pedido:</span>
+                            </div>
+                            <div class="col-12 col-md-1 px-0 text-center">
+                                <span style="font-size: 1.2rem;" id="estado_actual" class="badge red mr-1"></span>
+                            </div>
+                        </div>
+                        <!-- Cart -->
+
+                        <!-- Promo code -->
+                        <!-- Promo code -->
+
+                    </div>
+                    <!--Grid column-->
+                </div>
+                <!--Grid row-->
+            </div>
+        </div>
+    </main>
+    <input id="idPedido" type="hidden" value="<%=id%>">
+    <!-- Flexbox container for aligning the toasts -->
+    <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center"
+        style="min-height: 200px;">
+        <!-- Then put toasts within -->
+        <div class="toast" role="alert" aria-live="assertive" data-delay="2500" aria-atomic="true"
+            style="position: fixed; top: 70vh; right: 40vw;z-index: 1;">
+            <div class="toast-header">
+                <img src="..." class="rounded mr-2" alt="...">
+                <strong id="titulo_toast" class="mr-auto" style="color:whitesmoke;font-size: 1.5rem;"></strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="texto_toast" class="toast-body"></div>
+        </div>
+    </div>
+    <!--Main layout-->
+    <% include ../partials/footer %>
+    <script>
+        $(document).ready(function () {
+            getCart($('#idPedido').val());
+        });
+        function getCart(id) {
+            console.log(id);
+            $.ajax({
+                url: '/Carts/GetOrders/Cart/' + id,
+                type: 'GET',
+                success: function (data, status) {
+                    if (status !== 'nocontent') {
+                        $.ajax({
+                            url: '/Carts/id/' + id,
+                            type: 'GET',
+                            success: function (data, status) {
+                                if (status !== 'nocontent') {
+                                    let datos = 'Enviado a ' + data.name + ' ' + data.lastNames;
+                                    datos += ', en la direccion ' + data.address + ', ' + data.address2 + ', ' + data.cp + ', Ensenada, B.C';
+                                    $('#datos_envio').text(datos);
+                                    if (data.completed)
+                                        $('#estado_actual').text('COMPLETADO');
+                                    if (data.delivered)
+                                        $('#estado_actual').text('ENVIADO');
+                                    if (data.payed)
+                                        $('#estado_actual').text('PAGADO');
+                                    if (data.sent)
+                                        $('#estado_actual').text('COLOCADO');
+                                }
+                                console.log(data);
+                            }
+                        });
+                        $('#pedidos_elements').empty();
+                        let total = 0;
+                        data.forEach(arr => {
+                            total += arr['product'].currentPrice;
+                            console.log(arr['product']);
+                            elemento = '<li class="list-group-item d-flex justify-content-between lh-condensed">';
+                            elemento += '<div><h6 class="my-0">' + arr['product'].name + '</h6><small class="text-muted">';
+                            elemento += arr['product'].description + '</small></div><span class="text-muted">$' + arr['product'].currentPrice + '</span></li>';
+                            $('#pedidos_elements').append($(elemento));
+                        });
+                        console.log(total);
+                        $('#total_precio').text('$' + total);
+                        $('#cantidad_productos_pedidos').text(data.length);
+                        $('#titulo_toast').text('Pedido');
+                        $('#texto_toast').text('Se encontro el pedido con exito');
+                        $('.toast-header').css('background-color', 'green');
+                        $('.toast').toast('show');
+                    } else {
+                        $('#titulo_toast').text('Pedido');
+                        $('#texto_toast').text('No se encontro un carrito para ese codigo');
+                        $('.toast-header').css('background-color', 'tomato');
+                        $('.toast').toast('show');
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status === 0 || jqXHR.status == 500) {
+                    $('#titulo_toast').text('Error De Conexion');
+                    $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
+                    $('.toast-header').css('background-color', 'tomato');
+                    $('.toast').toast('show');
+                }
+            });
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,19 +1,20 @@
 const ProductsRepository = require('../repositories/ProductsRepository');
 const mongodb = require("mongodb");
+const ResponseHandler = require('../helpers/ResponseHandler');
 
 class ProductsService {
-    async add(producto) {
-        return ProductsRepository.add(producto).then(res => {
-            return this.responseHandler(res, 'Ocurrio un problema al agregar el producto!.');
+    async add(product) {
+        return ProductsRepository.add(product).then(res => {
+            return ResponseHandler(false, res, 'Se agrego el producto.', 'No se almaceno el producto.');
         }).catch( error => {
             return Promise.reject(error);
         });
     }
 
-    async deleteById(idProducto) {
-        if (mongodb.ObjectID.isValid(idProducto)) {
-            return ProductsRepository.deleteById(idProducto).then(res => {
-                return this.responseHandler(res, 'Ocurrio un problema al eliminar el producto!.');  
+    async deleteById(idProduct) {
+        if (mongodb.ObjectID.isValid(idProduct)) {
+            return ProductsRepository.deleteById(idProduct).then(res => {
+                return ResponseHandler(false, res, 'Se elimino el producto.', 'No se elimino el producto.');
             }).catch( error => {
                 return Promise.reject(error);
             });  
@@ -22,9 +23,9 @@ class ProductsService {
         }
     }
 
-    async update(producto) {
-        return ProductsRepository.update(producto).then(res => {
-            return this.responseHandler(res, 'Ocurrio un problema al modificar el producto!.');
+    async update(product) {
+        return ProductsRepository.update(product).then(res => {
+            return ResponseHandler(false, res, 'Se modifico el producto.', 'No se modifico el producto.');
         }).catch( error => {
             return Promise.reject(error);
         });
@@ -32,16 +33,16 @@ class ProductsService {
 
     async getAll() {
         return ProductsRepository.getAll().then(res => {
-            return this.responseHandler(res, 'No hay ningun producto en el sistema!.');
+            return ResponseHandler(true, res, 'Se obtuvieron los productos.', 'No se obtuvieron los productos.');
         }).catch( error => {
             return Promise.reject(error);
         });
     }
 
-    async getById(idProducto) {
-        if (mongodb.ObjectID.isValid(idProducto)) {
-            return ProductsRepository.getById(idProducto).then(res => {
-                return this.responseHandler(res, 'No se encontro el producto!.');
+    async getById(idProduct) {
+        if (mongodb.ObjectID.isValid(idProduct)) {
+            return ProductsRepository.getById(idProduct).then(res => {
+                return ResponseHandler(false, res, 'Se encontro el producto.', 'No se encontro el producto.');
             }).catch( error => {
                 return Promise.reject(error);
             });
@@ -52,7 +53,7 @@ class ProductsService {
 
     async getAllByFilter(options) {
         return ProductsRepository.getAllByFilter(options).then(res => {
-            return this.responseHandler(res, 'No se encontro el producto!.');
+            return ResponseHandler(true, res, 'Se obtuvieron los productos.', 'No se obtuvieron los productos.');
         }).catch( error => {
             return Promise.reject(error);
         }); 
@@ -60,18 +61,10 @@ class ProductsService {
 
     async getSample(options) {
         return ProductsRepository.getSample(options).then(res => {
-            return this.responseHandler(res, 'No se encontraron productos!.');
+            return ResponseHandler(true, res, 'Se obtuvieron los productos.', 'No se obtuvieron los productos.');
         }).catch( error => {
             return Promise.reject(error);
         });
-    }
-
-    responseHandler(response, errorMessage) {
-        if (response === null || response.length === 0) {
-            return Promise.reject(new Error(errorMessage));
-        } else {
-            return Promise.resolve(response);
-        }
     }
 }
 

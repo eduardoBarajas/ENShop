@@ -1,67 +1,121 @@
-var mongoose = require('mongoose')
-const ModeloPedidos = require('../models/OrderModel');
-const ModeloProductos = require('../models/ProductModel');
+const ProductsService = require('../services/ProductsService');
+const OrdersService = require('../services/OrdersService');
+
+const REQUEST_MAPPING = '/Orders/';
 
 module.exports.controller = function(app) {
-  
-  app.post('/AgregarPedido', function(req, res) {
-    var pedido_nuevo = new ModeloPedidos({ 
-        IdCarrito: req.body.IdCarrito,
-        IdProducto: req.body.IdProducto,
-        Cantidad: req.body.Cantidad,
-        PrecioUnitario: req.body.PrecioUnitario,
-        Completado: req.body.Completado
-    });
-    pedido_nuevo.save(function (err, pedido) {
-        if (err) return handleError(err);
-        // saved!
-        ModeloProductos.findById(pedido.IdProducto, function (err, producto) {
-            if (err) return console.log(err.errors);
-            producto.CantidadDisponible = producto.CantidadDisponible - pedido.Cantidad;
-            producto.save(function (err) {
-                if (err) return console.log(err.errors);
-                console.log('EXITO');
-                res.sendStatus(200);
-            });
-        });
-    });
-  });
 
-  app.get('/Pedidos/:id', function(req, res) {
-    ModeloPedidos.find({IdCarrito: req.params['id']}, function(err, pedidos) {
-        if (err) return console.log(err.errors);
-        res.writeHead(200, { 'Content-Type': "text/plain" });
-        res.end(pedidos.length.toString());
-    });
-  });
+  // Views Endpoints
 
   app.get('/Pedidos', function(req, res) {
-    res.render('Pedidos/pedidos');
+    res.render('orders/list');
   });
 
-  app.delete('/EliminarPedido/:id', function(req, res) {
-    ModeloPedidos.findById(req.params['id'], function(err, pedido) {
-        if (err) return res.status(500).json(err);
-        ModeloProductos.findById(pedido.IdProducto, function(errorProducto, producto) {
-          if (errorProducto) return res.status(500).json(errorProducto);
-          producto.CantidadDisponible = producto.CantidadDisponible + pedido.Cantidad;
-          producto.save();
+  app.get('/Pedidos/id/:id', function(req, res) {
+    res.render('orders/details', {id: req.params.id});
+  });
+
+  // Data Endpoints
+  
+  app.post(`${REQUEST_MAPPING}Save`, function(req, res) {
+    var new_order = { 
+        idCart: req.body.idCart,
+        idProduct: req.body.idProduct,
+        quantity: req.body.quantity,
+        unitaryPrice: req.body.unitaryPrice,
+        completed: req.body.completed
+    };
+    OrdersService.add(new_order).then( resultOrder => {
+      if (resultOrder.status === 'Success') {
+        ProductsService.getById(resultOrder.response.idProduct).then( resultProduct => {
+          resultProduct.response.availableStock = resultProduct.response.availableStock - resultOrder.response.quantity;
+          ProductsService.update(resultProduct.response).then( result => {
+            if (result.status === 'Success') {
+              console.log('EXITO');
+              res.sendStatus(200);
+            } else {
+              console.log('NO EXITO');
+              res.sendStatus(204);
+            }
+          }).catch(error => {
+            console.log(error);
+            res.sendStatus(500);
+          });
+        }).catch(error => {
+          console.log(error);
+          OrdersService.delete(resultOrder.response._id).then( () => {
+            res.sendStatus(500);
+          }).catch(error => {
+            console.log(error);
+            res.sendStatus(500);
+          });
         });
-        pedido.remove();
-        res.writeHead(200, { 'Content-Type': "text/plain" });
-        res.end('PedidoEliminado');
+      } else {
+        console.log('NO EXITO');
+        res.sendStatus(204);
+      }
+    }).catch(error => {
+      console.log(error);
+      res.sendStatus(500);
     });
   });
 
-  app.get('/Admin/MostrarPedidos', function(req, res) {
-    res.render('Pedidos/admin_pedidos');
-  });
-
-  app.get('/ObtenerTodosLosPedidos/:id', function(req, res) {
-    ModeloPedidos.find( { IdCarrito: req.params.id }, function(err, pedidos) {
-      if (err) return res.status(404).send('No se pudo recuperar los productos');
-      res.writeHead(200, { 'Content-Type': "application/json" });
-      res.end(JSON.stringify(pedidos));
+  app.delete(`${REQUEST_MAPPING}Delete/:id`, function(req, res) {
+    OrdersService.getById(req.params['id']).then(orderResult => {
+      if (orderResult.status === 'Success') {
+        ProductsService.getById(orderResult.response.idProduct).then(productResult => {
+          if (productResult.status === 'Success') {
+            productResult.response.availableStock = productResult.response.availableStock + orderResult.response.quantity;
+            ProductsService.update(productResult.response).then( result => {
+              if (result.status === 'Success') {
+                console.log('extiooo');
+                OrdersService.deleteById(req.params['id']).then( deleteResult => {
+                  if (deleteResult.status === 'Success') {
+                    res.sendStatus(200);
+                  } else {
+                    res.sendStatus(204);
+                  }
+                }).catch(error => {
+                  console.log(error);
+                  res.sendStatus(500);
+                })
+              } else {
+                console.log('fallo');
+                res.sendStatus(204);
+              }
+            }).catch(error => {
+              console.log(error);
+              res.sendStatus(500);
+            });
+          } else {
+            res.sendStatus(204);
+          }
+        }).catch(error => {
+          console.log(error);
+          res.sendStatus(500);
+        });
+      } else {
+        console.log('fallo');
+        res.sendStatus(204);
+      }
+    }).catch(error => {
+      console.log(error);
+      res.sendStatus(500);
     });
   });
+
+  app.get(`${REQUEST_MAPPING}All/idCart/:id`, function(req, res) {
+    OrdersService.getAllByFilter({ idCart: req.params.id }).then(ordersResult => {
+      if (ordersResult.status === 'Success') {
+        res.writeHead(200, { 'Content-Type': "application/json" });
+        res.end(JSON.stringify(ordersResult.response));
+      } else {
+        res.sendStatus(204);
+      }
+    }).catch(error => {
+      console.log(error);
+      res.sendStatus(500);
+    });
+  });
+  
 }

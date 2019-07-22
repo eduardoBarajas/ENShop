@@ -214,6 +214,7 @@
                 </div>
             </div>
         </div>
+        <input type="invisible" id="product-holder" value="<%= product %>">
       </main>
       <!--Main layout-->
     <% include ../partials/footer %>
@@ -222,19 +223,8 @@
         var links_images = [];
         const ref = firebase.storage().ref();
         $(document).ready(function(){
-            $.ajax({
-                url: '/Products/id/'+window.location.href.split('/')[window.location.href.split('/').length - 1 ],
-                type: 'GET',
-                success: function(data, status) {
-                    if (status !== 'nocontent') {
-                        console.log(status);
-                        console.log(data);
-                        fillForm(data);
-                    } else {
-                        console.log('NO SE ENCONTRO ESE PRODUCTO');
-                    }
-                }
-            });
+            var result = JSON.parse($('#product-holder').attr('value'));
+            fillForm(result.response);
             $("#btnModificar").click(function(){
                 $('.modal').show();
             });
@@ -254,7 +244,6 @@
                     if (image != undefined) {
                         // si imagen es del tipo string entonces significa que ya esta almacenado y solo es link
                         if (typeof image !== "string") {
-                            console.log('entra aquiiiiiiiiiiiii');
                             // var file_to_upload = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)+imagen.name;
                             const task = ref.child(image.name).put(image);
                             task.then((snapshot) => {
@@ -268,10 +257,8 @@
                             });
                         } else {
                             // si entra aqui significa que es una imagen vieja.
-                            console.log('entra aquiiiiiiiiiiiii z2222');
                             links_images.push(image);
                             num_images++;
-                            console.log(num_images);
                             if (num_images === num_total_images) {
                                 saveProduct(links_images);
                             }
@@ -319,12 +306,13 @@
                 ref.child(images[image.id].split('/')[7].split('?')[0]).delete().then(function() {
                     // File deleted successfully
                     images[image.id] = undefined;
-                    console.log('se elimino');
                     $('#'+image.id).remove();
                     $('#loader').remove();
                 }).catch(function(error) {
                     // Uh-oh, an error occurred!
                     console.log('Algo malo paso' + error);
+                    images[image.id] = undefined;
+                    $('#'+image.id).remove();
                     $('#loader').remove();
                 });
             } else {
@@ -335,11 +323,7 @@
         }
 
         function saveProduct(links) {
-            console.log('JAH');
-            console.log(links);
             var name = document.getElementById('name').value;
-            console.log('Links');
-            console.log(links);
             var productImages = [];
             links.forEach( image => {
                 if (!image.includes('?alt=media')) {
@@ -363,14 +347,18 @@
                 url: '/Products/Update/'+window.location.href.split('/')[window.location.href.split('/').length - 1 ],
                 type: 'PUT',
                 data: data,
-                success: function(result) {
-                    console.log(result);
-                    // Aqui ya se termino la operacion
+                success: function(data, status) {
+                    if (status !== 'nocontent') {
+                        $('#titulo_toast').text('Operacion Exitosa');
+                        $('#texto_toast').text('Se modifico el producto con exito');
+                        $('.toast-header').css('background-color','green');    
+                    } else {
+                        $('#titulo_toast').text('Operacion Fallida');
+                        $('#texto_toast').text('No se mdifico el producto');
+                        $('.toast-header').css('background-color','tomato');    
+                    }
                     $('#loader').remove();
                     $('.modal').hide();
-                    $('#titulo_toast').text('Operacion Exitosa');
-                    $('#texto_toast').text('Se agrego el nuevo producto con exito');
-                    $('.toast-header').css('background-color','green');
                     $('.toast').toast('show');
                     $('.toast').on('hidden.bs.toast', function () {
                         window.scroll({
@@ -394,7 +382,6 @@
         }
         
         function fillForm(product) {
-            console.log(product);
             (product.bestSeller === true) ? $('#bestseller_btn').data('seleccionado', 'NO') : $('#bestseller_btn').data('seleccionado', 'SI');
             setBtnBestSeller();
             document.getElementById('name').value = product.name;
@@ -429,7 +416,6 @@
                 });
                 images[x] = product.images[x];
             }
-            console.log(images);
         }
         </script>
   </body>

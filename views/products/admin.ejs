@@ -22,7 +22,7 @@
             <nav class="navbar navbar-expand-lg navbar-dark mdb-color lighten-3 mt-3 mb-5" style="background-color: #4CAF50!important;">
 
                 <span><button onclick="parent.location='/AgregarProducto'" type="button" class="btn btn-secondary" style="background-color: #4CAF50!important;">Agregar Producto</button></span>
-                <span><button onclick="parent.location='/Admin/MostrarPedidos'" type="button" class="btn btn-secondary" style="background-color: #4CAF50!important;">Mostrar Pedidos</button></span>
+                <span><button onclick="adminClick('Carritos')" type="button" class="btn btn-secondary" style="background-color: #4CAF50!important;">Mostrar Pedidos</button></span>
                 <!-- Navbar brand -->
                 <span class="navbar-brand">Categorias:</span>
     
@@ -59,7 +59,7 @@
     
                 <form class="form-inline">
                     <div class="md-form my-0">
-                        <input id="busqueda_input" onkeyup="searchProduct()" class="form-control mr-sm-2" type="text" placeholder="Buscar" aria-label="Buscar">
+                        <input id="search_input" onkeyup="searchProduct()" class="form-control mr-sm-2" type="text" placeholder="Buscar" aria-label="Buscar">
                     </div>
                 </form>
                 </div>
@@ -126,24 +126,7 @@
                         url: '/Products/id/'+$('#btn_modal_si').data('id_product'),
                         type: 'GET',
                         success: function(product) {
-                            console.log(product);
-                            let deleted_images = 0;
-                            product.images.forEach( image => {
-                                ref.child(image.split('/')[7].split('?')[0]).delete().then(function() {
-                                    // File deleted successfully
-                                    deleted_images++;
-                                    if (deleted_images === product.images.length) {
-                                        deleteProduct();
-                                    }
-                                }).catch(function(error) {
-                                    // Uh-oh, an error occurred!
-                                    if (error['code'] === 'storage/object-not-found') {
-                                        deleteProduct();
-                                    } else {
-                                        console.error(error);
-                                    }
-                                });
-                            });
+                            deleteProduct(product);
                         }
                     });
                 });
@@ -155,11 +138,11 @@
                 $.ajax({
                     url: '/Products/GetAll',
                     type: 'GET',
-                    success: function(data, status) {
+                    success: function(result, status) {
                         if (status !== 'nocontent') {
-                            loadProducts(data);
+                            loadProducts(result.response);
                         } else {
-                            $('#titulo_toast').text('No Hay Products');
+                            $('#titulo_toast').text('No Hay Productos');
                             $('#texto_toast').text('No se encontraron en el sistema');
                             $('.toast-header').css('background-color','tomato');
                             $('.toast').toast('show');
@@ -179,12 +162,13 @@
                 $.ajax({
                     url: '/Products/Category/'+category,
                     type: 'GET',
-                    success: function(data, status) {
+                    success: function(result, status) {
+                        console.log(result);
                         if (status !== 'nocontent') {
                             setSelectedOption(category);
-                            setProducts(data);
+                            loadProducts(result.response);
                         } else {
-                            $('#titulo_toast').text('No Hay Products');
+                            $('#titulo_toast').text('No Hay Productos');
                             $('#texto_toast').text('No se encontraron en '+category);
                             $('.toast-header').css('background-color','tomato');
                             $('.toast').toast('show');
@@ -223,8 +207,8 @@
                     $.ajax({
                         url: '/Products/Search/'+$('#search_input').val(),
                         type: 'GET',
-                        success: function (data, status) {
-                            setProducts(data);
+                        success: function (result, status) {
+                            loadProducts(result.response);
                         }
                     }).fail(function( jqXHR, textStatus, errorThrown ) {
                         if (jqXHR.status === 0 || jqXHR.status == 500) {
@@ -254,12 +238,25 @@
                 $('#btn_modal_si').data('id_product', id);
             }
             
-            function deleteProduct() {
+            function deleteProduct(product) {
                 $.ajax({
-                    url: '/Products/Delete/'+$('#btn_modal_si').data('id_product'),
+                    url: '/Products/Delete/'+product._id,
                     type: 'DELETE',
                     success: function(data, status) {
                         if (status !== 'nocontent') {
+                            let deleted_images = 0;
+                            product.images.forEach( image => {
+                                ref.child(image.split('/')[7].split('?')[0]).delete().then(function() {
+                                    // File deleted successfully
+                                    deleted_images++;
+                                    if (deleted_images === product.images.length) {
+                                        console.log('se eliminaron todas');
+                                    }
+                                }).catch(function(error) {
+                                    // Uh-oh, an error occurred!
+                                    console.error(error);
+                                });
+                            });
                             $('#titulo_toast').text('Product Eliminado');
                             $('#texto_toast').text('Se elimno el product satisfactoriamente');
                             $('.toast-header').css('background-color','tomato');
@@ -275,7 +272,6 @@
                     }
                 });
             }
-
         </script>
     </body>
 </html>

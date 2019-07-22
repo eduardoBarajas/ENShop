@@ -5,54 +5,87 @@
         <a class="navbar-brand waves-effect" onclick="parent.location='/'" target="_blank">
             <strong class="blue-text">ENShop</strong>
         </a>
-    <!-- Collapse -->
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-    </button>
+        <!-- Collapse -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <!-- Links -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <!-- Links -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-    <!-- Left -->
-    <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-        <a class="nav-link waves-effect" onclick="parent.location='/'">Inicio
-            <!--<span class="sr-only">(current)</span>-->
-        </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link waves-effect" onclick="parent.location='/Catalogo'" target="_blank">Productos</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link waves-effect" onclick="parent.location='/Admin'" target="_blank">Admin</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link waves-effect" onclick="parent.location='/Pedidos'" target="_blank">Pedidos</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link waves-effect" onclick="parent.location='/About'" target="_blank">Acerca ENShop</a>
-        </li>
-    </ul>
+            <!-- Left -->
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link waves-effect" onclick="parent.location='/'">Inicio
+                        <!--<span class="sr-only">(current)</span>-->
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link waves-effect" onclick="parent.location='/Catalogo'" target="_blank">Productos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link waves-effect" onclick="parent.location='/Pedidos'" target="_blank">Pedidos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link waves-effect" onclick="parent.location='/About'" target="_blank">Acerca
+                        ENShop</a>
+                </li>
+                <li class="nav-item">
+                    <a id="btnAdmin" class="nav-link waves-effect" style="display: none;" onclick="adminClick('Catalogo')" target="_blank">Admin</a>
+                </li>
+            </ul>
 
-    <!-- Right -->
-    <ul class="navbar-nav nav-flex-icons">
-        <li id="carrito-id" class="nav-item">
-        <a class="nav-link waves-effect" onclick="parent.location='/Carrito'">
-            <span id="carrito_badge" class="badge red z-depth-1 mr-1"></span>
-            <i class="fas fa-shopping-cart"></i>
-            <span class="clearfix d-none d-sm-inline-block"> Carrito </span>
-        </a>
-        </li>
-        <li class="nav-item">
-        <a href="https://www.facebook.com/mdbootstrap" class="nav-link waves-effect" target="_blank">
-            <i class="fab fa-facebook-f"></i>
-        </a>
-        </li>
-    </ul>
+            <!-- Right -->
+            <ul class="navbar-nav nav-flex-icons">
+                <li id="carrito-id" class="nav-item">
+                    <a class="nav-link waves-effect" onclick="parent.location='/Carrito'">
+                        <span id="carrito_badge" class="badge red z-depth-1 mr-1"></span>
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="clearfix d-none d-sm-inline-block"> Carrito </span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="https://www.facebook.com/mdbootstrap" class="nav-link waves-effect" target="_blank">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a id="btnLogin" class="nav-link waves-effect" style="display: none;" onclick="parent.location='/Login'" target="_blank">
+                        Iniciar Sesion</a>
+                </li>
+                <li class="nav-item">
+                    <a id="btnLogout" class="nav-link waves-effect" style="display: none;" onclick="logout()" target="_blank">
+                        Cerrar Sesion</a>
+                </li>
+            </ul>
+
+        </div>
 
     </div>
-
-</div>
 </nav>
+<script>
+    if (localStorage.getItem('userSession') !== null) {
+        if (JSON.parse(localStorage.getItem('userSession'))['token'] != null) {
+            document.getElementById('btnAdmin').style.display = 'block';
+        }
+        document.getElementById('btnLogin').style.display = 'none';
+        document.getElementById('btnLogout').style.display = 'block';
+        const date = new Date();
+        const dateExpires = new Date(JSON.parse(localStorage.getItem('userSession'))['expire']);
+        if (date > dateExpires) {
+            logout();
+        }
+    } else {
+        document.getElementById('btnLogin').style.display = 'block';
+        document.getElementById('btnLogout').style.display = 'none';
+    }
+
+    function logout() {
+        document.getElementById('btnLogout').style.display = 'none';
+        document.getElementById('btnLogin').style.display = 'block';
+        document.getElementById('btnAdmin').style.display = 'none';
+        localStorage.removeItem('userSession');
+    }
+</script>
 <!-- Navbar -->

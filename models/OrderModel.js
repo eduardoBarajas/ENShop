@@ -9,5 +9,5 @@ var OrderSchema = new Schema({
     unitaryPrice: Number
 });
 
-var OrdersModel = mongoose.model('Orders', OrderSchema);
+var OrdersModel = mongoose.model('orders', OrderSchema);
 module.exports = OrdersModel;

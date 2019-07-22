@@ -2,9 +2,11 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var expressJwt = require('express-jwt');
 var logger = require('morgan');
 var fs = require('file-system');  
 var bodyParser = require('body-parser');
+const dotenv = require('dotenv');
 
 // var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
@@ -51,6 +53,9 @@ app.use(helmet());
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
+// env file reader init
+dotenv.config();
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -60,6 +65,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'assets')));
+
+app.use(expressJwt({secret: process.env.SECRET_KEY,
+  credentialsRequired: true,
+  getToken: function fromHeaderOrQuerystring (req) {
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        return req.headers.authorization.split(' ')[1];
+    } else if (req.query && req.query.token) {
+      return req.query.token;
+    }
+    return null;
+  }}).unless({path: new RegExp('^(?!.*Admin).*$', 'i')}));
 
 // app.use('/', indexRouter);
 // app.use('/users', usersRouter);

@@ -1,33 +1,33 @@
 const ProductModel = require('../models/ProductModel');
 
 class ProductsRepository {
-    async add(product) {
-		return new ProductModel(product).save();
-    }
+  async add(product) {
+    return new ProductModel(product).save();
+  }
 
-    async deleteById(idProducto) {
-      return ProductModel.findByIdAndRemove(idProducto).exec();
-    }
+  async deleteById(idProduct) {
+    return ProductModel.findByIdAndRemove(idProduct).exec();
+  }
 
-    async update(producto) {
-      return ProductModel.findByIdAndUpdate(producto._id, producto).exec();
-    }
+  async update(product) {
+    return ProductModel.findByIdAndUpdate(product._id, product).exec();
+  }
 
-    async getAll() {
-      return ProductModel.find({}).exec();
-    }
+  async getAll() {
+    return ProductModel.find({}).exec();
+  }
 
-    async getById(idProducto) {
-      return ProductModel.findById(idProducto).exec();
-    }
+  async getById(idProduct) {
+    return ProductModel.findById(idProduct).exec();
+  }
 
-    async getAllByFilter(options) {
-      return ProductModel.find(options).exec();
-	 }
+  async getAllByFilter(options) {
+    return ProductModel.find(options).exec();
+  }
 	 
-	 async getSample(options) {
-		 return ProductModel.aggregate([options]).exec();
-	 }
+  async getSample(options) {
+    return ProductModel.aggregate([options]).exec();
+  }
 }
 
 module.exports = Object.create(new ProductsRepository);

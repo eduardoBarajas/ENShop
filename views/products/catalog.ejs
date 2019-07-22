@@ -101,7 +101,7 @@
                 type: 'GET',
                 success: function (data, status) {
                     if (status !== 'nocontent') {
-                        setProducts(data);
+                        setProducts(data.response);
                     } else {
                         $('#titulo_toast').text('No Hay Productos');
                         $('#texto_toast').text('No se encontraron en el sistema');
@@ -124,9 +124,10 @@
                 url: '/Products/Category/' + category,
                 type: 'GET',
                 success: function (data, status) {
+                    console.log(data);
                     if (status !== 'nocontent') {
                         setSelectedOption(category);
-                        setProducts(data);
+                        setProducts(data.response);
                     } else {
                         $('#titulo_toast').text('No Hay Productos');
                         $('#texto_toast').text('No se encontraron en ' + category);
@@ -169,7 +170,7 @@
                     url: '/Products/Search/' + $('#search_input').val(),
                     type: 'GET',
                     success: function (data, status) {
-                        setProducts(data);
+                        setProducts(data.response);
                     }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     if (jqXHR.status === 0 || jqXHR.status == 500) {
