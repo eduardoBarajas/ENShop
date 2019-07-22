@@ -212,6 +212,9 @@
         <script>
             $(document).ready(function() {
                 if (sessionStorage.getItem('CartSession') != null) {
+                    if (localStorage.getItem('userSession') != null) {
+                        fillUserInfo(JSON.parse(localStorage.getItem('userSession'))['idUser']);
+                    }
                     getCart(sessionStorage.getItem('CartSession'));
                     $('#btnCompletar').click(e => {
                         saveCart(sessionStorage.getItem('CartSession'));
@@ -289,6 +292,32 @@
                             $('#texto_toast').text('Hubo un problema al obtener los pedidos por favor intenta de nuevo. ');
                             $('.toast-header').css('background-color','tomato');
                             $('.toast').toast('show');
+                        }
+                    }
+                }).fail(function( jqXHR, textStatus, errorThrown ) {
+                    if (jqXHR.status === 0 || jqXHR.status == 500) {
+                        $('#titulo_toast').text('Error De Conexion');
+                        $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
+                        $('.toast-header').css('background-color','tomato');
+                        $('.toast').toast('show');
+                    }
+                });
+            }
+
+            function fillUserInfo(idUser) {
+                $.ajax({
+                    url: '/Users/id/'+idUser,
+                    type: 'GET',
+                    success: function(res, status) {
+                        if (status !== 'nocontent') {
+                            let data = JSON.parse(res);
+                            $('#lastName').val(data.lastNames);
+                            $('#lastName').focus();
+                            $('#firstName').val(data.name);
+                            $('#firstName').focus();
+                            $('#email').val(data.email);
+                            $('#address').val(data.address);
+                            $('#zip').val(data.cp);
                         }
                     }
                 }).fail(function( jqXHR, textStatus, errorThrown ) {

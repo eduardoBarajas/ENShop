@@ -28,6 +28,10 @@ class CartsRepository {
     async getAllByFilter(options) {
         return CartsModel.find(options).exec();
     }
+
+    async getAllByFilterSorted(options, sortOptions) {
+        return CartsModel.find(options).sort(sortOptions).exec();
+    }
         
     async getSample(options) {
         return CartsModel.aggregate([options]).exec();

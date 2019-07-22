@@ -15,7 +15,7 @@
 
                         <!-- Heading -->
                         <h4 class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="text-muted">Tus Pedidos</span>
+                            <span class="text-muted">Tu Pedido</span>
                             <span id="cantidad_productos_pedidos" class="badge badge-secondary badge-pill">3</span>
                         </h4>
 
@@ -80,6 +80,7 @@
                 url: '/Carts/GetOrders/Cart/' + id,
                 type: 'GET',
                 success: function (data, status) {
+                    console.log(data);
                     if (status !== 'nocontent') {
                         $.ajax({
                             url: '/Carts/id/' + id,
@@ -102,17 +103,38 @@
                             }
                         });
                         $('#pedidos_elements').empty();
-                        let total = 0;
+                        var total = 0;
                         data.forEach(arr => {
-                            total += arr['product'].currentPrice;
-                            console.log(arr['product']);
-                            elemento = '<li class="list-group-item d-flex justify-content-between lh-condensed">';
-                            elemento += '<div><h6 class="my-0">' + arr['product'].name + '</h6><small class="text-muted">';
-                            elemento += arr['product'].description + '</small></div><span class="text-muted">$' + arr['product'].currentPrice + '</span></li>';
-                            $('#pedidos_elements').append($(elemento));
+                            $.ajax({
+                                url: '/Orders/id/' + arr['id_order'],
+                                type: 'GET',
+                                success: function(result, status) {
+                                    console.log(result);
+                                    if (status !== 'nocontent') {
+                                        total += arr['product'].currentPrice * result['quantity'];
+                                        console.log(arr['product']);
+                                        elemento = '<li class="list-group-item d-flex justify-content-between lh-condensed">';
+                                        elemento += `<div class="container"><div class="row text-center"><div class="col-4 col-md-4"><div><h6 class="my-0">${arr['product'].name}</h6><small class="text-muted">Cantidad: x${result['quantity']}</small></div></div>`;
+                                        elemento += `<div class="col-5 col-md-5"><small class="text-muted">${arr['product'].description}</small></div><div class="col-3 col-md-3"><span class="text-muted">Precio Unitario: $${arr['product'].currentPrice}</span></div></li></div>`;
+                                        $('#pedidos_elements').append($(elemento));
+                                        $('#total_precio').text('$' + total);
+                                    } else {
+                                        $('#titulo_toast').text('Ocurrio Un Error');
+                                        $('#titulo_toast').text('No se pudo agregar correctamente el producto, vuelve a intentarlo');
+                                        $('.toast-header').css('background-color','red');
+                                        $('.toast').toast('show');
+                                    }
+                                }
+                                }).fail(function( jqXHR, textStatus, errorThrown ) {
+                                if (jqXHR.status === 0 || jqXHR.status == 500) {
+                                    $('#titulo_toast').text('Error De Conexion');
+                                    $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
+                                    $('.toast-header').css('background-color','tomato');
+                                    $('.toast').toast('show');
+                                }
+                            });
                         });
                         console.log(total);
-                        $('#total_precio').text('$' + total);
                         $('#cantidad_productos_pedidos').text(data.length);
                         $('#titulo_toast').text('Pedido');
                         $('#texto_toast').text('Se encontro el pedido con exito');

@@ -5,29 +5,29 @@
 
 <body>
     <!--Main layout-->
-    <main class="mt-5 pt-4">
+    <main class="mt-5 pt-6">
         <div class="container wow fadeIn">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="md-form">
                         <input type="text" id="IdCarrito" class="form-control">
                         <label for="IdCarrito" class="">Numero de identificacion del pedido</label>
                     </div>
                 </div>
-                <div class="col-md-2 mt-2">
+                <div class="col-md-2 mt-3">
                     <button id="btnBuscarCarrito" class="btn btn-primary btn-md btn-block" type="button">Buscar
                         Pedido</button>
                 </div>
             </div>
             <!--Este div le da el espacio cuando el contenido quiere ser ocultado-->
-            <div id="spacer-div" style="min-height: 40vh;">
+            <div id="spacer-div" style="min-height: 60vh;">
                 <div class="row">
-                    <div class="col-md-12 py-0 my-4">
+                    <div class="col-md-12 py-0 my-6">
                         <img src="/img/svg/pedidos.svg" alt="" class="mx-auto my-2"
-                            style="width: 100%; height: 40vh;" />
+                            style="width: 100%; height: 60vh;" />
                     </div>
                     <div class="col-md-12 text-center">
-                        <p style="font-size: 3rem;">Rastrea tu pedido aqui</p>
+                        <p style="font-size: 6rem;">Rastrea tu pedido aqui</p>
                     </div>
                 </div>
             </div>
@@ -35,20 +35,40 @@
             <div id="content" hidden>
                 <div class="row">
                     <!--Grid column-->
-                    <div class="col-md-12 mb-4">
+                    <div class="col-md-12 mb-6">
 
                         <!-- Heading -->
-                        <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="d-flex justify-content-between align-items-center mb-6">
                             <span class="text-muted">Tus Pedidos</span>
-                        </h4>
+                        </h6>
 
                         <!-- Pedidos -->
                         <ul id="pedidos_list" class="list-group">
+                            <div class="container">
+                                <div class="row" id="pedidos-container">
+                                </div>
+                            </div>
                         </ul>
                         <!-- Pedidos -->
-
-                        <!-- Promo code -->
-                        <!-- Promo code -->
+                        
+                        <!-- Pagination-->
+                        <nav id="pagination" style="display: none;">
+                            <ul class="pagination" id="pagination-list">
+                                <li class="page-item" id="backPagination">
+                                    <a class="page-link" href="#" aria-label="Anterior">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <ul class="pagination" id="pagination-links">
+                                </ul>
+                                <li class="page-item" id="nextPagination">
+                                    <a class="page-link" href="#" aria-label="Siguiente">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <!-- PAgination-->
 
                     </div>
                     <!--Grid column-->
@@ -62,7 +82,7 @@
         style="min-height: 200px;">
         <!-- Then put toasts within -->
         <div class="toast" role="alert" aria-live="assertive" data-delay="2500" aria-atomic="true"
-            style="position: fixed; top: 70vh; right: 40vw;z-index: 1;">
+            style="position: fixed; top: 70vh; right: 60vw;z-index: 1;">
             <div class="toast-header">
                 <img src="..." class="rounded mr-2" alt="...">
                 <strong id="titulo_toast" class="mr-auto" style="color:whitesmoke;font-size: 1.5rem;"></strong>
@@ -78,24 +98,36 @@
     <script>
         $(document).ready(function () {
             if (localStorage.getItem('userSession') !== null) {
-                $.ajax({
-                    url: '/Carts/GetAll/User/' + JSON.parse(localStorage.getItem('userSession'))['idUser'],
-                    type: 'GET',
-                    success: function (data, status) {
-                        if (status !== 'nocontent') {
-                            data.forEach( carrito => {
-                                getData(carrito._id);
-                            });
-                        } else {
-                            $('#spacer-div').removeAttr('hidden');
-                            $('#content').attr('hidden', 'true');
-                            $('#titulo_toast').text('Pedido');
-                            $('#texto_toast').text('No haz realizado ningun pedido.');
-                            $('.toast-header').css('background-color', 'tomato');
-                            $('.toast').toast('show');
-                        }
+                getCartsIds(0, 6);
+            }
+            $('#btnBuscarCarrito').click(e => {
+                $('#pedidos-container').empty();
+                getData($('#IdCarrito').val());
+            });
+        });
+
+        function getCartsIds(start, end) {
+            $.ajax({
+                url: `/Carts/Get/From/${start}/To/${end}/User/` + JSON.parse(localStorage.getItem('userSession'))['idUser'],
+                type: 'GET',
+                success: function (data, status) {
+                    console.log(data);
+                    if (status !== 'nocontent') {
+                        $('#pedidos-container').empty();
+                        setPaginationActions(data.cartsLength);
+                        data.carts.forEach( cart => { 
+                            getData(cart._id);
+                        });
+                    } else {
+                        $('#spacer-div').removeAttr('hidden');
+                        $('#content').attr('hidden', 'true');
+                        $('#titulo_toast').text('Pedido');
+                        $('#texto_toast').text('No haz realizado ningun pedido.');
+                        $('.toast-header').css('background-color', 'tomato');
+                        $('.toast').toast('show');
                     }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status === 0 || jqXHR.status == 500) {
                     $('#titulo_toast').text('Error De Conexion');
                     $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
@@ -103,12 +135,8 @@
                     $('.toast').toast('show');
                 }
             });
-            }
-            $('#btnBuscarCarrito').click(e => {
-                $('#pedidos_elements').empty();
-                getData($('#IdCarrito').val());
-            });
-        });
+        }
+
         function getData(id) {
             console.log(id);
             $.ajax({
@@ -127,16 +155,12 @@
                         if (data.completed)
                             state = 'COMPLETADO';
                         let link = '/Pedidos/id/';
-                        let node = `<a id="pedido_item_${data._id}" onclick="parent.location='${link}${data._id}'" data-toggle="collapse" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">`+
-                                    `<div class="flex-column">Cliente: ${data.name} ${data.lastNames}<p><small>Direccion Envio: ${data.address}, ${data.address2}, ${data.cp}, Ensenada, ` + 
-                                    `B.C.</small></p><small>Estado: </small><span id="estado_pedido_${data._id}" class="badge badge-primary badge-pill">${state}</span> <small>Realizado: </small><span id="created_${data._id}" class="badge badge-primary badge-pill">${data.creationDate}</span></div>`;          
-                        $('#pedidos_list').append(node);
+                        let node = `<div class="col-12 col-md-5 mx-2 my-2"><a id="pedido_item_${data._id}" onclick="parent.location='${link}${data._id}'" data-toggle="collapse" class="shadow list-group-item list-group-item-action d-flex justify-content-between align-items-center">`+
+                                    `<div class="flex-column w-100">Cliente: ${data.name} ${data.lastNames}<p><small>Direccion Envio: ${data.address}, ${data.address2}, ${data.cp}, Ensenada, ` + 
+                                    `B.C.</small></p><div class="row w-100"><div class="col-6 col-md-6"><small>Estado: </small><span id="estado_pedido_${data._id}" class="badge badge-dark badge-pill">${state}</span> <small></div><div class="col-6 col-md-6">Realizado: </small><span id="created_${data._id}" class="badge badge-dark badge-pill">${data.creationDate}</span></div></div></div> `;          
+                        $('#pedidos-container').append(node);
                         $('#spacer-div').attr('hidden', 'true');
                         $('#content').removeAttr('hidden');
-                        $('#titulo_toast').text('Pedido');
-                        $('#texto_toast').text('Se encontro el pedido con exito');
-                        $('.toast-header').css('background-color', 'green');
-                        $('.toast').toast('show');
                     } else {
                         $('#spacer-div').removeAttr('hidden');
                         $('#content').attr('hidden', 'true');
@@ -155,7 +179,35 @@
                 }
             });
         }
-
+        
+        function setPaginationActions(length) {
+            document.getElementById('pagination-links').innerHTML = '';
+            if (length === 0) {
+                document.getElementById('pagination').style.display = 'none';
+                return;
+            }
+            document.getElementById('pagination').style.display = 'block';
+            for (let x = 0; x < length; x ++) {
+                if (x % 6 === 0) {
+                    console.log('entro aq');
+                    let index = x;
+                    if (index === 0) {
+                        index = 1;
+                    } else {
+                        index = (index / 6) + 1;
+                    }
+                    let node = document.createElement('li');
+                    node.classList.add('page-item');
+                    let childNode = document.createElement('a');
+                    childNode.classList.add('page-link');
+                    childNode.setAttribute('onclick', `getCartsIds(${x}, ${x + 6})`);
+                    childNode.text = index.toString();
+                    node.appendChild(childNode);
+                    let parentNode = document.getElementById('pagination-links');
+                    parentNode.append(node);
+                }
+            }
+        }
     </script>
 </body>
 

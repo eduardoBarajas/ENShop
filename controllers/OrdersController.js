@@ -118,4 +118,17 @@ module.exports.controller = function(app) {
     });
   });
   
+  app.get(`${REQUEST_MAPPING}id/:id`, function(req, res) {
+    OrdersService.getById(req.params.id).then(ordersResult => {
+      if (ordersResult.status === 'Success') {
+        res.writeHead(200, { 'Content-Type': "application/json" });
+        res.end(JSON.stringify(ordersResult.response));
+      } else {
+        res.sendStatus(204);
+      }
+    }).catch(error => {
+      console.log(error);
+      res.sendStatus(500);
+    });
+  });
 }

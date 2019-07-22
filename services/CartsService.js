@@ -51,6 +51,14 @@ class CartsService {
         }); 
     }
 
+    async getAllByFilterSorted(options, sortOptions) {
+        return CartsRepository.getAllByFilterSorted(options, sortOptions).then(res => {
+            return ResponseHandler(true, res, 'Se obtuvieron los carritos.', 'No hay carritos con esa especificacion.');
+        }).catch( error => {
+            return Promise.reject(error);
+        }); 
+    }
+
     async exists(idCart) {
         return await CartsRepository.getById(idCart).then(response => {
             return ResponseHandler(false, response, 'Ya existe un carrito con ese id!.', 'No hay carritos con ese id.');

@@ -1,5 +1,6 @@
 const UsersRepository = require('../repositories/UsersRepository');
 const ResponseHandler = require('../helpers/ResponseHandler');
+const mongodb = require("mongodb");
 
 class UsersService {
     async add(user) {

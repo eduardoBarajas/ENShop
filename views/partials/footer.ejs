@@ -56,7 +56,7 @@
             }
         }));
         function adminClick(route) {
-            if (localStorage.getItem('userSession')!== null) {
+            if (localStorage.getItem('userSession') !== null) {
                 parent.location = `/Admin/${route}?token=${JSON.parse(localStorage.getItem('userSession'))['token']}`;
             }
         }

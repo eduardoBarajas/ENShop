@@ -118,6 +118,26 @@ module.exports.controller = function(app) {
     });
   });
 
+  app.get(`${REQUEST_MAPPING}Get/From/:start/To/:end/User/:id`, function(req, res) {
+    options = {};
+    if (req.params.id !== 'undefined') {
+      options['idUser'] = req.params.id;
+    }
+    console.log(options);
+    CartsService.getAllByFilterSorted(options, {creationDate: -1}).then( cartsResult => {
+      if (cartsResult.status === 'Success') {
+        res.writeHead(200, { 'Content-Type': "application/json" });
+        let response = {cartsLength: cartsResult.response.length, carts: cartsResult.response.splice(req.params.start, req.params.end)};
+        res.end(JSON.stringify(response));
+      } else {
+        res.sendStatus(204);
+      }
+    }).catch(error => {
+      console.log(error);
+      res.sendStatus(500);
+    });
+  });
+
   app.get(`${REQUEST_MAPPING}GetAll/User/:id`, function(req, res) {
     CartsService.getAllByFilter({idUser: req.params.id}).then( cartsResult => {
       if (cartsResult.status === 'Success') {
