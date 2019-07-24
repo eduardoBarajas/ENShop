@@ -169,29 +169,7 @@
         </div>
       </div>
     <!--Main layout-->
+    <% include ../partials/modal %>
     <% include ../partials/footer %>
-    <script>
-      function logIn() {
-        var userInfo = { email: $('#inputEmail').val(), pass: $('#inputPassword').val() };
-        $.ajax({
-          url: '/Auth/LogIn',
-          type: 'POST',
-          data: userInfo,
-          success(response, status) {
-            if (status !== 'nocontent') {
-              response.expire = new Date(Date.now() + (response.expire * 1000));
-              localStorage.setItem('userSession', JSON.stringify(response));
-              location.href = '/';
-            } else {
-              alert('Fallo el login');
-            }
-          }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            if (jqXHR.status === 0 || jqXHR.status == 500) {
-                alert('error: 500');
-            }
-        });
-      }
-    </script>
   </body>
 </html>

@@ -104,29 +104,29 @@
         <div class="container" style="margin-top: 1rem;">
             <!--Section: Products v.3-->
             <section class="text-center my-2 mx-4">
-                <div class="row wow fadeIn my-1 w-100">
+                <div class="row wow my-1 w-100">
                     <div class="col-md-10 text-center mx-auto my-2">
                         <%if (products.length > 0) { %>
-                            <h4 class="my-2 h4">Conoce Nuestros Productos</h4>
+                            <h4 class="my-2 h4 animated slow bounceInLeft">Conoce Nuestros Productos</h4>
 
-                            <p>Aqui en ENShop contamos con una gran variedad de productos que
+                            <p class="animated slower bounceInLeft text-justify">Aqui en ENShop contamos con una gran variedad de productos que
                                 van de desde electronicos hasta prendas de vestir, cada uno de nuestros
                                 productos tiene una excelente relacion precio/calidad asi que sabemos que no te
                                 arrepentiras.</p>
                         
                         <% } else { %>
-                            <h4 class="my-4 h4">No Hay Productos En El Sistema</h4>
+                            <h4 class="my-4 h4 animated slow bounceInLeft">No Hay Productos En El Sistema</h4>
 
-                            <p>Por favor comienza a anadir productos dando click en el siguiente boton.</p>
+                            <p class="animated slower bounceInLeft text-justify">Por favor comienza a anadir productos dando click en el siguiente boton.</p>
                         <%}%>
                     </div>
                 </div>
                 <!--Grid row-->
-                <div class="row wow fadeIn">
+                <div class="row wow">
                     <%if (products.length > 0) { %>
                         <% products.forEach(product => {%>
                         <!--Grid column-->
-                        <div class="col-lg-3 col-md-3 mb-4">
+                        <div class="col-lg-3 col-md-3 mb-4 animated <%=animationsSpeeds[products.indexOf(product)]%> bounceInUp">
 
                             <!--Card-->
                             <div class="card">
@@ -175,12 +175,12 @@
             </section>
             <!--Section: Products v.3-->
             <% if ((products.length > 0)) { %>
-                <div class="row w-100">
+                <div class="row w-100 animated slow bounceInLeft">
                     <a target="_blank" onclick="parent.location='/Catalogo'"
                         class="background-btn btn btn-outline-white btn-lg mx-auto">Ve Todos Nuestros Productos</a>
                 </div>
             <% } else { %>
-                <div class="row w-100">
+                <div class="row w-100 animated slow bounceInLeft">
                     <a target="_blank" onclick="parent.location='/AgregarProducto'"
                         class="background-btn btn btn-outline-white btn-lg mx-auto">Agrega Productos</a>
                 </div>

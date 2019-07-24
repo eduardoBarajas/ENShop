@@ -11,16 +11,19 @@
         animation-direction: normal;
         animation-fill-mode: forwards;
     }
+
     @keyframes paint-in-anim {
-        0%   {
-        background-color: white;
-        color: black;
+        0% {
+            background-color: white;
+            color: black;
         }
-        100%   {
-        background-color: #a6c;
-        color: whitesmoke;
+
+        100% {
+            background-color: #a6c;
+            color: whitesmoke;
         }
     }
+
     .paint-out {
         animation-name: paint-out-anim;
         animation-duration: 1s;
@@ -30,16 +33,19 @@
         animation-direction: normal;
         animation-fill-mode: forwards;
     }
+
     @keyframes paint-in-anim {
-        100%   {
-        background-color: #a6c;
-        color: whitesmoke;
+        100% {
+            background-color: #a6c;
+            color: whitesmoke;
         }
-        0%   {
-        background-color: white;
-        color: black;
+
+        0% {
+            background-color: white;
+            color: black;
         }
     }
+
     .fade-out {
         animation-name: desaparecer-anim;
         animation-duration: 1s;
@@ -49,14 +55,17 @@
         animation-direction: normal;
         animation-fill-mode: forwards;
     }
+
     @keyframes desaparecer-anim {
-        0%   {
-        opacity: 1;
+        0% {
+            opacity: 1;
         }
-        100%   {
-        opacity: 0;
+
+        100% {
+            opacity: 0;
         }
     }
+
     .fade-in {
         animation-name: aparecer-anim;
         animation-duration: 1s;
@@ -66,12 +75,14 @@
         animation-direction: normal;
         animation-fill-mode: forwards;
     }
+
     @keyframes aparecer-anim {
-        0%   {
-        opacity: 0;
+        0% {
+            opacity: 0;
         }
-        100%   {
-        opacity: 1;
+
+        100% {
+            opacity: 1;
         }
     }
 </style>
@@ -79,7 +90,8 @@
 <script>
     document.getElementById('carrito-id').remove();
 </script>
-    <body>
+
+<body>
     <!--Main layout-->
     <main class="mt-5 pt-4">
         <div class="container wow fadeIn">
@@ -100,159 +112,43 @@
                 <div class="row">
                     <!--Grid column-->
                     <div class="col-md-12 mb-4">
-            
-                    <!-- Heading -->
-                    <h4 class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-muted">Tu Carrito</span>
-                        <span id="cantidad_products_pedidos" class="badge badge-secondary badge-pill">3</span>
-                    </h4>
-            
-                    <!-- Cart -->
-                    <ul id="carrito" class="list-group mb-3 z-depth-1">
-                        <div id="pedidos_elements"></div>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Total (MX)</span>
-                            <strong id="total_precio"></strong>
-                        </li>
-                    </ul>
-                    <!-- Cart -->
-            
-                    <!-- Promo code -->
-                    <div class="offset-md-8 col-md-4">
-                        <button class="btn btn-secondary btn-md waves-effect m-0 w-100" onclick="parent.location='/Pago'"  type="button">Proceder A Pagar</button>
-                    </div>
-                    <!-- Promo code -->
-            
+
+                        <!-- Heading -->
+                        <h4 class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted">Tu Carrito</span>
+                            <span id="cantidad_products_pedidos" class="badge badge-secondary badge-pill">3</span>
+                        </h4>
+
+                        <!-- Cart -->
+                        <ul id="carrito" class="list-group mb-3 z-depth-1">
+                            <div id="pedidos_elements"></div>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Total (MX)</span>
+                                <strong id="total_precio"></strong>
+                            </li>
+                        </ul>
+                        <!-- Cart -->
+
+                        <!-- Promo code -->
+                        <div class="offset-md-8 col-md-4">
+                            <button class="btn btn-secondary btn-md waves-effect m-0 w-100"
+                                onclick="parent.location='/Pago'" type="button">Proceder A Pagar</button>
+                        </div>
+                        <!-- Promo code -->
+
                     </div>
                     <!--Grid column-->
-            
+
                 </div>
                 <!--Grid row-->
             </div>
         </div>
-      </main>
-      <!-- Flexbox container for aligning the toasts -->
-      <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
-            <!-- Then put toasts within -->
-            <div class="toast" role="alert" aria-live="assertive" data-delay="2500" aria-atomic="true" style="position: fixed; top: 70vh; right: 40vw;z-index: 1;">
-                <div class="toast-header">
-                <!--<img src="..." class="rounded mr-2" alt="...">-->
-                <strong id="titulo_toast" class="mr-auto" style="color:whitesmoke;font-size: 1.5rem;"></strong>
-                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                </div>
-                <div id="texto_toast" class="toast-body"></div>
-            </div>
-        </div>
-      <!--Main layout-->
-        <% include ../partials/footer %>    
-        <script>
-            $(document).ready(function() {
-                if (sessionStorage.getItem('CartSession') != null) {
-                    getCartOrders(sessionStorage.getItem('CartSession'));
-                } else {
-                    $('#spacer-div').removeAttr('hidden');
-                    $('#content').attr('hidden', 'true');
-                }
-            });
-            
-            function getCartOrders(id) {
-                console.log(id);
-                $.ajax({
-                    url: '/Carts/GetOrders/Cart/' + id,
-                    type: 'GET',
-                    success: function(data, status) {
-                        if (status !== 'nocontent') {
-                            console.log(data);
-                            $('#pedidos_elements').empty();
-                            let total = 0;
-                            data.forEach( arr => {
-                                total += arr['product'].currentPrice;
-                                element = '<li id="element'+data.indexOf(arr)+'" class="list-group-item d-flex justify-content-between lh-condensed">';
-                                element += '<div><h6 id="nombre'+data.indexOf(arr)+'" class="my-0">'+arr['product'].name+'</h6><small id="descripcion'+data.indexOf(arr)+'" class="text-muted">';
-                                element += arr['product'].description+'</small></div><span><button id="btn_cancelar'+data.indexOf(arr)+'" style="background-color: tomato!important;opacity: 0" class="btn btn-secondary btn-md waves-effect m-0 w-100"  type="button">Cancelar</button></span><span id="precio'+data.indexOf(arr)+'" class="text-muted">$'+arr['product'].currentPrice+'</span></li>';
-                                $('#pedidos_elements').append(element);
-                                $('#element'+data.indexOf(arr)).hover( hover => {
-                                    // se quitan las clases
-                                    $('#element'+data.indexOf(arr)).removeClass('paint-out');
-                                    $('#nombre'+data.indexOf(arr)).removeClass('paint-out');
-                                    $('#precio'+data.indexOf(arr)).removeClass('paint-out');
-                                    $('#descripcion'+data.indexOf(arr)).removeClass('paint-out');
-                                    $('#btn_cancelar'+data.indexOf(arr)).removeClass('fade-out');
-                                    // se ponen las clases
-                                    $('#element'+data.indexOf(arr)).addClass('paint-in');
-                                    $('#nombre'+data.indexOf(arr)).addClass('paint-in');
-                                    $('#precio'+data.indexOf(arr)).addClass('paint-in'); 
-                                    $('#precio'+data.indexOf(arr)).removeClass('text-muted');
-                                    $('#descripcion'+data.indexOf(arr)).addClass('paint-in'); 
-                                    $('#descripcion'+data.indexOf(arr)).removeClass('text-muted'); 
-                                    $('#btn_cancelar'+data.indexOf(arr)).addClass('fade-in'); 
-                                }, unhover => {
-                                    $('#element'+data.indexOf(arr)).removeClass('paint-in');
-                                    $('#nombre'+data.indexOf(arr)).removeClass('paint-in');
-                                    $('#precio'+data.indexOf(arr)).removeClass('paint-in');
-                                    $('#descripcion'+data.indexOf(arr)).removeClass('paint-in');
-                                    $('#btn_cancelar'+data.indexOf(arr)).removeClass('fade-in');
-                                    // se ponen las clases
-                                    $('#element'+data.indexOf(arr)).addClass('paint-out');
-                                    $('#nombre'+data.indexOf(arr)).addClass('paint-out');
-                                    $('#precio'+data.indexOf(arr)).addClass('paint-out');
-                                    $('#precio'+data.indexOf(arr)).addClass('text-muted');
-                                    $('#descripcion'+data.indexOf(arr)).addClass('paint-out');
-                                    $('#descripcion'+data.indexOf(arr)).addClass('text-muted'); 
-                                    $('#btn_cancelar'+data.indexOf(arr)).addClass('fade-out');
-                                });
-                                $('#btn_cancelar'+data.indexOf(arr)).click( function() {
-                                    $.ajax({
-                                        url: '/Orders/Delete/'+arr['id_order'],
-                                        type: 'DELETE',
-                                        success: function(res, status) {
-                                            if (status !== 'nocontent') {
-                                                $('#total_precio').text('$'+(parseFloat($('#total_precio').text().split('$')[1]) - arr['product'].currentPrice));
-                                                $('#cantidad_products_pedidos').text(parseInt($('#cantidad_products_pedidos').text()) - 1);
-                                                $('#element'+data.indexOf(arr)).remove();
-                                                /*if ($('#pedidos_elements').children().length === 0) {
-                                                    $('#content').fadeOut(1000, function() {
-                                                        $('#content').attr('hidden', 'true');
-                                                        $('#spacer-div').removeAttr('hidden');
-                                                        $('#spacer-div').css('display', 'none');
-                                                        $('#spacer-div').fadeIn(1000); 
-                                                    });
-                                                }*/
-                                            } else {
-                                                $('#titulo_toast').text('Error Pedidos');
-                                                $('#texto_toast').text('Hubo un problema eliminando el pedido intenta de nuevo. ');
-                                                $('.toast-header').css('background-color','tomato');
-                                                $('.toast').toast('show');
-                                            }
-                                        }
-                                    })
-                                });
-                            });
-                            $('#total_precio').text('$'+total);
-                            $('#cantidad_products_pedidos').text(data.length);
-                            $('#spacer-div').attr('hidden', 'true');
-                            $('#content').removeAttr('hidden');
-                            $('#content').css('display', 'none');
-                            $('#content').fadeIn(1000);
-                        } else {
-                            $('#spacer-div').removeAttr('hidden');
-                            $('#content').attr('hidden', 'true');
-                            $('#spacer-div').css('display', 'none');
-                            $('#spacer-div').fadeIn(1000);
-                        }
-                    }
-                }).fail(function( jqXHR, textStatus, errorThrown ) {
-                    if (jqXHR.status === 0 || jqXHR.status == 500) {
-                        $('#titulo_toast').text('Error De Conexion');
-                        $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
-                        $('.toast-header').css('background-color','tomato');
-                        $('.toast').toast('show');
-                    }
-                });
-            }
-        
-        </script>    
-    </body>
+    </main>
+
+    <!--Main layout-->
+    <% include ../partials/modal %>
+    <% include ../partials/footer %>
+    <script>initCartModule();</script>
+</body>
+
 </html>

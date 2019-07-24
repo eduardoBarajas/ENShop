@@ -4,6 +4,25 @@ body,
 .view {
   height: 100%; }
 
+.btn_modal_response {
+  background-color: whitesmoke!important;
+  color: black;
+}
+
+.btn_modal_response:hover {
+  color: rebeccapurple!important;
+}
+
+.content_modal_success {
+  background-color: green;
+  color: whitesmoke;
+}
+
+.content_modal_failed {
+  background-color: tomato;
+  color: whitesmoke;
+}
+
 /* Half Page Carousel itself*/
 .carousel {
   height: 50%; }

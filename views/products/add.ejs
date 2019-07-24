@@ -164,9 +164,9 @@
                     <label for="aditionalInfo" class="">Informacion Adicional</label>
                   </div>
                   <input class="my-2" type="file" id="input" accept="image/*">
-                  <div id="Imagenes" class="row"></div>
+                  <div id="images" class="row"></div>
                   <hr class="mb-4">
-                  <button class="btn btn-primary btn-lg btn-block" type="button" id="btnAgregar">Agregar Producto</button>
+                  <button class="btn btn-primary btn-lg btn-block" type="button" id="btnAction">Agregar Producto</button>
                 </form>
               </div>
               <!--/.Card-->
@@ -175,146 +175,12 @@
           </div>
           <!--Grid row-->
         </div>
-        <!-- Flexbox container for aligning the toasts -->
-        <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
-            <!-- Then put toasts within -->
-            <div class="toast" role="alert" aria-live="assertive" data-delay="2500" aria-atomic="true" style="position: fixed; top: 70vh; right: 40vw;z-index: 1;">
-                <div class="toast-header">
-                <!--<img src="..." class="rounded mr-2" alt="...">-->
-                <strong id="titulo_toast" class="mr-auto" style="color:whitesmoke;font-size: 1.5rem;"></strong>
-                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                </div>
-                <div id="texto_toast" class="toast-body"></div>
-            </div>
-        </div>
+        <% include ../partials/modal %>
       </main>
       <!--Main layout-->
     <% include ../partials/footer %>
     <script>
-      var images = [undefined, undefined, undefined, undefined, undefined, undefined];
-      var images_links = [];
-      const ref = firebase.storage().ref();
-      $(document).ready(function(){
-          $("#btnAgregar").click(function(){
-            // se agrega el loader para mostrar que esta modificando
-            $('.card-body').append('<div class="row"><div class="col-md-12"><div id="loader" class="lds-facebook d-block mx-auto"><div></div><div></div><div></div></div></div></div>');
-            // Se utilizan dos contadores para determinar si la subida de imagenes finalizo en su totalidad.
-            var current_image_index = 0;
-            var total_images = 0;
-            // Se obtiene el numero de imagenes que fueron seleccionadas.
-            images.forEach( image => { if (image != undefined) total_images ++; });
-            images.forEach( image => {
-              if (image != undefined) {
-                const task = ref.child(image.name).put(image);
-                task.then((file) => {
-                  // una vez terminada la task se obtiene el link para acceder a la imagen.
-                  ref.child(image.name).getDownloadURL().then((link) => {
-                    // se debe obtener el link hasta la aparicion del simbolo de interrogacion para que funcione.
-                    images_links.push(link.substring(0, link.indexOf('?')));
-                    // una vez se almacene se incrementa el contador y si ya son todas se prosigue a almacenar el producto.
-                    current_image_index++;
-                    if (current_image_index === total_images) {
-                      saveProduct(images_links);
-                    }
-                  });  
-                });
-              }
-            });   
-          });
-      });
-      const inputElement = document.getElementById("input");
-      inputElement.addEventListener("change", handleFiles, false);
-
-      function handleFiles() {
-          for (let x = 0; x < 6; x++) {
-              if (images[x] == undefined) {
-                images[x] = this.files[0];
-                $('#Imagenes').append('<a id="'+x+'" onclick="deleteImage(this)" class="background-btn btn btn-outline-white waves-effect waves-light" target="_blank" role="button">'+images[x].name+'</a>');
-                $('#'+x).hover( e => {
-                  $('#'+x).text('Eliminar Imagen');
-                }, e2 => {
-                  $('#'+x).text(images[x].name);
-                });
-                break;
-              }
-              if (x == 5) {
-                  alert('Ya eligiste el maximo de imagenes, elimina una antes de intentar subir otra');
-              }
-          }
-      }
-
-      function deleteImage(image) {
-          $('#'+image.id).remove();
-          images[image.id] = undefined;
-      }
-
-      function saveProduct(imagesLinks) {
-        var productImages = [];
-        imagesLinks.forEach( image => {
-          productImages.push(image += '?alt=media');
-        });
-        var name = document.getElementById('name').value;
-        var description = document.getElementById('description').value;
-        var category = document.getElementById('category').value;
-        var state = document.getElementById('state').value;
-        var currentPrice = document.getElementById('currentPrice').value;
-        var originalPrice = document.getElementById('originalPrice').value;
-        var availableStock = document.getElementById('availableStock').value;
-        var aditionalInfo = document.getElementById('aditionalInfo').value;
-        var data = "availableStock="+availableStock+'&name='+name+'&description='+description+'&category='+
-          category+'&state='+state+'&currentPrice='+currentPrice+'&originalPrice='+originalPrice+
-          '&aditionalInfo='+aditionalInfo+'&images='+productImages;
-        $.ajax({
-          url: '/Products/Save',
-          type: 'POST',
-          data: data,
-          success: function(result, status) {
-            if (status !== 'nocontent') {
-              $('#loader').remove();
-              $('#titulo_toast').text('Operacion Exitosa');
-              $('#texto_toast').text('Se agrego el nuevo producto con exito');
-              $('.toast-header').css('background-color','green');
-              $('.toast').toast('show');
-              document.getElementById('description').value = '';
-              document.getElementById('name').value = '';
-              document.getElementById('category').value = '';
-              document.getElementById('state').value = '';
-              document.getElementById('currentPrice').value = '';
-              document.getElementById('originalPrice').value = '';
-              document.getElementById('availableStock').value = '';
-              document.getElementById('aditionalInfo').value = '';
-              images_links = [];
-              images = [undefined, undefined, undefined, undefined, undefined, undefined];
-              document.getElementById("input").value = '';
-              $('#Imagenes').empty();
-              $('.toast').on('hidden.bs.toast', function () {
-                  window.scroll({
-                      top: 0, 
-                      left: 0, 
-                      behavior: 'smooth'
-                  });
-                  setTimeout(function() {
-                      document.getElementById('name').focus();
-                  }, 750);
-              });
-            } else {
-              $('#titulo_toast').text('Ocurrio Un Error');
-              $('#titulo_toast').text('No se pudo agregar correctamente el producto, vuelve a intentarlo');
-              $('.toast-header').css('background-color','red');
-              $('.toast').toast('show');
-            }
-          }
-        }).fail(function( jqXHR, textStatus, errorThrown ) {
-            if (jqXHR.status === 0 || jqXHR.status == 500) {
-                $('#titulo_toast').text('Error De Conexion');
-                $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
-                $('.toast-header').css('background-color','tomato');
-                $('.toast').toast('show');
-            }
-        });
-      }
+      initProductModule();
     </script>
   </body>
 </html>

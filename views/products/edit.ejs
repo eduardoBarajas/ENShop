@@ -1,422 +1,209 @@
 <!DOCTYPE html>
 <html class="no-js" lang="zxx">
-  <% include ../partials/head %>
-  <style>
+<% include ../partials/head %>
+<style>
     .background-btn {
-      background-color: #48AB3B!important;
-      color: whitesmoke;
+        background-color: #48AB3B !important;
+        color: whitesmoke;
     }
+
     .background-btn:hover {
-      background-color: tomato!important;
-      color: whitesmoke;
+        background-color: tomato !important;
+        color: whitesmoke;
     }
+
     .lds-facebook {
-    display: inline-block;
-    position: relative;
-    width: 64px;
-    height: 64px;
+        display: inline-block;
+        position: relative;
+        width: 64px;
+        height: 64px;
     }
+
     .lds-facebook div {
-    display: inline-block;
-    position: absolute;
-    left: 6px;
-    width: 13px;
-    background: #43A047;
-    animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+        display: inline-block;
+        position: absolute;
+        left: 6px;
+        width: 13px;
+        background: #43A047;
+        animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
     }
+
     .lds-facebook div:nth-child(1) {
         left: 6px;
         animation-delay: -0.24s;
     }
+
     .lds-facebook div:nth-child(2) {
         left: 26px;
         animation-delay: -0.12s;
     }
+
     .lds-facebook div:nth-child(3) {
         left: 45px;
         animation-delay: 0;
     }
+
     @keyframes lds-facebook {
         0% {
             top: 6px;
             height: 51px;
         }
-        50%, 100% {
+
+        50%,
+        100% {
             top: 19px;
             height: 26px;
         }
     }
-  </style>
-  <% include ../partials/navbar %>
-  <script>
-      document.getElementById('carrito-id').remove();
-  </script>
-  <body>
+</style>
+<% include ../partials/navbar %>
+<script>
+    document.getElementById('carrito-id').remove();
+</script>
+<body>
     <!--Main layout-->
     <main class="mt-5 pt-4">
         <div class="container wow fadeIn">
-          <!-- Heading -->
-          <h2 class="my-5 h2 text-center">Modificar Producto</h2>
-    
-          <!--Grid row-->
-          <div class="row">
-    
-            <!--Grid column-->
-            <div class="col-md-12 mb-4">
-    
-              <!--Card-->
-              <div class="card">
-    
-                <!--Card content-->
-                <form class="card-body">
-    
-                  <!--Grid row-->
-                  <div class="row">
-    
-                    <!--Grid column-->
-                    <div class="col-md-6 mb-2">
-    
-                      <!--Nombre-->
-                      <div class="md-form ">
-                        <input type="text" id="name" class="form-control">
-                        <label id="name-label" for="name" class="">Nombre</label>
-                      </div>
-                    </div>
-                    <!--Grid column-->
-    
-                    <!--Grid column-->
-                    <div class="col-md-6 mb-2">
-    
-                      <!--Descripcion-->
-                      <div class="md-form">
-                        <input type="text" id="description" class="form-control">
-                        <label id="description-label" for="description" class="">Descripcion</label>
-                      </div>
-    
-                    </div>
-                    <!--Grid column-->
-    
-                  </div>
-                  <!--Grid row-->
-    
-                  <div class="row">
-                    <!--Grid column-->
-                    <div class="col-lg-6 col-md-6 mb-4">
-        
-                        <label for="category">Categoria</label>
-                        <select class="custom-select d-block w-100" id="category" required>
-                            <option value="">Elige...</option>
-                            <option>Electronicos</option>
-                            <option>Ropa</option>
-                            <option>Electrodomesticos</option>
-                            <option>Calzado</option>
-                            <option>Varios</option>
-                        </select>
-                    </div>
-                    <!--Grid column-->
+            <!-- Heading -->
+            <h2 class="my-5 h2 text-center">Modificar Producto</h2>
 
-                    <!--Grid column-->
-                    <div class="col-lg-6 col-md-6 mb-4">
-        
-                        <label for="state">Estado</label>
-                        <select class="custom-select d-block w-100" id="state" required>
-                            <option value="">Elige...</option>
-                            <option>Nuevo</option>
-                            <option>SemiNuevo</option>
-                            <option>Usado</option>
-                        </select>
-                    </div>
-                    <!--Grid column-->
-                </div>
-                    
-                <div class="row">
-                  <!--Grid column-->
-                  <div class="col-md-5 mb-2">
-                    <!--PrecioOriginal-->
-                    <div class="md-form mb-5">
-                        <input type="number" id="originalPrice" class="form-control" placeholder="1250.00">
-                        <label id="originalPrice-label" for="originalPrice" class="">Precio Original</label>
-                    </div>
-                  </div>
+            <!--Grid row-->
+            <div class="row">
 
-                  <!--Grid column-->
-                  <div class="col-md-5 mb-2">
-                    <!--PrecioActual-->
-                    <div class="md-form mb-5">
-                        <input type="number" id="currentPrice" class="form-control" placeholder="1250.00" required>
-                        <label id="currentPrice-label" for="currentPrice" class="">Precio Actual</label>
-                    </div>
-                  </div>
+                <!--Grid column-->
+                <div class="col-md-12 mb-4">
 
-                  <!--Grid column-->
-                  <div class="col-md-2 mb-2">
-                    <!--Cantidad-->
-                    <div class="md-form mb-5">
-                        <input type="number" id="availableStock" class="form-control" placeholder="1250" required>
-                        <label id="availableStock-label" for="availableStock" class="">Cantidad</label>
+                    <!--Card-->
+                    <div class="card">
+
+                        <!--Card content-->
+                        <form class="card-body">
+
+                            <!--Grid row-->
+                            <div class="row">
+
+                                <!--Grid column-->
+                                <div class="col-md-6 mb-2">
+
+                                    <!--Nombre-->
+                                    <div class="md-form ">
+                                        <input type="text" id="name" class="form-control">
+                                        <label id="name-label" for="name" class="">Nombre</label>
+                                    </div>
+                                </div>
+                                <!--Grid column-->
+
+                                <!--Grid column-->
+                                <div class="col-md-6 mb-2">
+
+                                    <!--Descripcion-->
+                                    <div class="md-form">
+                                        <input type="text" id="description" class="form-control">
+                                        <label id="description-label" for="description" class="">Descripcion</label>
+                                    </div>
+
+                                </div>
+                                <!--Grid column-->
+
+                            </div>
+                            <!--Grid row-->
+
+                            <div class="row">
+                                <!--Grid column-->
+                                <div class="col-lg-6 col-md-6 mb-4">
+
+                                    <label for="category">Categoria</label>
+                                    <select class="custom-select d-block w-100" id="category" required>
+                                        <option value="">Elige...</option>
+                                        <option>Electronicos</option>
+                                        <option>Ropa</option>
+                                        <option>Electrodomesticos</option>
+                                        <option>Calzado</option>
+                                        <option>Varios</option>
+                                    </select>
+                                </div>
+                                <!--Grid column-->
+
+                                <!--Grid column-->
+                                <div class="col-lg-6 col-md-6 mb-4">
+
+                                    <label for="state">Estado</label>
+                                    <select class="custom-select d-block w-100" id="state" required>
+                                        <option value="">Elige...</option>
+                                        <option>Nuevo</option>
+                                        <option>SemiNuevo</option>
+                                        <option>Usado</option>
+                                    </select>
+                                </div>
+                                <!--Grid column-->
+                            </div>
+
+                            <div class="row">
+                                <!--Grid column-->
+                                <div class="col-md-5 mb-2">
+                                    <!--PrecioOriginal-->
+                                    <div class="md-form mb-5">
+                                        <input type="number" id="originalPrice" class="form-control"
+                                            placeholder="1250.00">
+                                        <label id="originalPrice-label" for="originalPrice" class="">Precio
+                                            Original</label>
+                                    </div>
+                                </div>
+
+                                <!--Grid column-->
+                                <div class="col-md-5 mb-2">
+                                    <!--PrecioActual-->
+                                    <div class="md-form mb-5">
+                                        <input type="number" id="currentPrice" class="form-control"
+                                            placeholder="1250.00" required>
+                                        <label id="currentPrice-label" for="currentPrice" class="">Precio Actual</label>
+                                    </div>
+                                </div>
+
+                                <!--Grid column-->
+                                <div class="col-md-2 mb-2">
+                                    <!--Cantidad-->
+                                    <div class="md-form mb-5">
+                                        <input type="number" id="availableStock" class="form-control" placeholder="1250"
+                                            required>
+                                        <label id="availableStock-label" for="availableStock" class="">Cantidad</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--InformacionAdicional-->
+                            <div class="md-form mb-5">
+                                <input type="text" id="aditionalInfo" class="form-control"
+                                    placeholder="Que mas quieres mencionar del producto?">
+                                <label id="aditionalInfo-label" for="aditionalInfo" class="">Informacion
+                                    Adicional</label>
+                            </div>
+                            <input class="my-2" type="file" id="input" accept="image/*">
+                            <div id="images" class="row"></div>
+                            <hr class="mb-4">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p>El producto es un Best Seller?</p>
+                                    <button id="bestseller_btn" class="btn btn-secondary btn-md waves-effect m-0"
+                                        type="button">No</button>
+                                </div>
+                            </div>
+                            <hr class="mb-4">
+                            <button class="btn btn-primary btn-lg btn-block" type="button" id="btnAction">Modificar
+                                Producto</button>
+                        </form>
                     </div>
-                  </div>
+                    <!--/.Card-->
                 </div>
-                  <!--InformacionAdicional-->
-                  <div class="md-form mb-5">
-                    <input type="text" id="aditionalInfo" class="form-control" placeholder="Que mas quieres mencionar del producto?">
-                    <label id="aditionalInfo-label" for="aditionalInfo" class="">Informacion Adicional</label>
-                  </div>
-                  <input class="my-2" type="file" id="input" accept="image/*">
-                  <div id="images" class="row"></div>
-                  <hr class="mb-4">
-                  <div class="row">
-                      <div class="col-md-4">
-                        <p>El producto es un Best Seller?</p>
-                        <button id="bestseller_btn" class="btn btn-secondary btn-md waves-effect m-0" type="button">No</button>
-                      </div>
-                  </div>
-                  <hr class="mb-4">
-                  <button class="btn btn-primary btn-lg btn-block" type="button" id="btnModificar">Modificar Producto</button>
-                </form>
-              </div>
-              <!--/.Card-->
+                <!--Grid column-->
             </div>
-            <!--Grid column-->
-          </div>
-          <!--Grid row-->
+            <!--Grid row-->
         </div>
-        <!-- Flexbox container for aligning the toasts -->
-        <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
-            <!-- Then put toasts within -->
-            <div class="toast" role="alert" aria-live="assertive" data-delay="2500" aria-atomic="true" style="position: fixed; top: 70vh; right: 40vw;z-index: 1;">
-                <div class="toast-header">
-                <img src="..." class="rounded mr-2" alt="...">
-                <strong id="titulo_toast" class="mr-auto" style="color:whitesmoke;font-size: 1.5rem;"></strong>
-                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                </div>
-                <div id="texto_toast" class="toast-body"></div>
-            </div>
-        </div>
-        <div class="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header" style="background-color: tomato;color: whitesmoke;">
-                        <h5 class="modal-title">Modificar Producto</h5>
-                        <button id="btn_cerrar_modal" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p id="texto_modal"> Estas seguro que quieres modificar este producto? </p>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="btn_modal_si" type="button" class="btn btn-primary">Si</button>
-                        <button id="btn_modal_no" type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: tomato!important;">No</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <input type="invisible" id="product-holder" value="<%= product %>">
-      </main>
-      <!--Main layout-->
+        <input type="hidden" id="product-holder" value="<%= product %>">
+        <% include ../partials/modal %>
+    </main>
+    <!--Main layout-->
     <% include ../partials/footer %>
-    <script>
-        var images = [undefined, undefined, undefined, undefined, undefined, undefined];
-        var links_images = [];
-        const ref = firebase.storage().ref();
-        $(document).ready(function(){
-            var result = JSON.parse($('#product-holder').attr('value'));
-            fillForm(result.response);
-            $("#btnModificar").click(function(){
-                $('.modal').show();
-            });
-            $('#bestseller_btn').click( function() {
-                setBtnBestSeller();
-            });
-            $('#btn_modal_no').click( e => { $('.modal').hide(); });
-            $('#btn_cerrar_modal').click( e => { $('.modal').hide(); });
-            $('#btn_modal_si').click(e => {
-                // se agrega el loader para mostrar que esta modificando
-                $('.modal-footer').prepend('<div id="loader" class="lds-facebook mr-5"><div></div><div></div><div></div></div>');
-                let num_images = 0;
-                let num_total_images = 0;
-                images.forEach( imagen => { if (imagen != undefined) num_total_images ++; });
-                console.log(num_total_images);
-                images.forEach( image => {
-                    if (image != undefined) {
-                        // si imagen es del tipo string entonces significa que ya esta almacenado y solo es link
-                        if (typeof image !== "string") {
-                            // var file_to_upload = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)+imagen.name;
-                            const task = ref.child(image.name).put(image);
-                            task.then((snapshot) => {
-                                ref.child(image.name).getDownloadURL().then((link) => {
-                                    links_images.push(link.substring(0, link.indexOf('?')));
-                                    num_images++;
-                                    if (num_images === num_total_images) {
-                                        saveProduct(links_images);
-                                    }
-                                });  
-                            });
-                        } else {
-                            // si entra aqui significa que es una imagen vieja.
-                            links_images.push(image);
-                            num_images++;
-                            if (num_images === num_total_images) {
-                                saveProduct(links_images);
-                            }
-                        }
-                    }
-                });
-            });
-        });
-        const inputElement = document.getElementById("input");
-        inputElement.addEventListener("change", handleFiles, false);
-        function handleFiles() {
-            for (let x = 0; x < 6; x++) {
-                if (images[x] == undefined) {
-                    images[x] = this.files[0];
-                    $('#images').append('<a id="'+x+'" onclick="deleteImage(this, false)" class="background-btn btn btn-outline-white waves-effect waves-light" target="_blank" role="button">'+images[x].name+'</a>');
-                    $('#'+x).hover( e => {
-                      $('#'+x).text('Eliminar Imagen');
-                    }, e2 => {
-                      $('#'+x).text(images[x].name);
-                    });
-                    break;
-                }
-                if (x == 5) {
-                    alert('Ya eligiste el maximo de images, elimina una antes de intentar subir otra');
-                }
-            }
-        }
-        function setBtnBestSeller() {
-            if ($('#bestseller_btn').data('seleccionado') == 'NO') {
-                $('#bestseller_btn').text('SI');
-                $('#bestseller_btn').data('seleccionado', 'SI');
-                $('#bestseller_btn').removeClass('btn-secondary');
-                $('#bestseller_btn').addClass('btn-primary');
-            } else {
-                $('#bestseller_btn').data('seleccionado', 'NO');
-                $('#bestseller_btn').text('NO');
-                $('#bestseller_btn').removeClass('btn-primary');
-                $('#bestseller_btn').addClass('btn-secondary');
-            }
-        }
-        function deleteImage(image, inDataBase) {
-            $('#images').append('<div id="loader" class="lds-facebook ml-5"><div></div><div></div><div></div></div>');
-            if (inDataBase) {
-                console.log('esta en la base de datos');
-                ref.child(images[image.id].split('/')[7].split('?')[0]).delete().then(function() {
-                    // File deleted successfully
-                    images[image.id] = undefined;
-                    $('#'+image.id).remove();
-                    $('#loader').remove();
-                }).catch(function(error) {
-                    // Uh-oh, an error occurred!
-                    console.log('Algo malo paso' + error);
-                    images[image.id] = undefined;
-                    $('#'+image.id).remove();
-                    $('#loader').remove();
-                });
-            } else {
-                images[image.id] = undefined;
-                $('#'+image.id).remove('hide');
-                $('#loader').remove();
-            }
-        }
+    <script>initProductModule();</script>
+</body>
 
-        function saveProduct(links) {
-            var name = document.getElementById('name').value;
-            var productImages = [];
-            links.forEach( image => {
-                if (!image.includes('?alt=media')) {
-                    productImages.push(image += '?alt=media');
-                } else {
-                    productImages.push(image);
-                }
-            });
-            var bestSeller = $('#bestseller_btn').data('seleccionado');
-            var description = document.getElementById('description').value;
-            var category = document.getElementById('category').value;
-            var state = document.getElementById('state').value;
-            var currentPrice = document.getElementById('currentPrice').value;
-            var originalPrice = document.getElementById('originalPrice').value;
-            var availableStock = document.getElementById('availableStock').value;
-            var aditionalInfo = document.getElementById('aditionalInfo').value;
-            var data = "availableStock="+availableStock+'&name='+name+'&description='+description+'&category='+
-                category+'&state='+state+'&currentPrice='+currentPrice+'&originalPrice='+originalPrice+
-                '&aditionalInfo='+aditionalInfo+'&images='+productImages+"&bestSeller="+bestSeller;
-            $.ajax({
-                url: '/Products/Update/'+window.location.href.split('/')[window.location.href.split('/').length - 1 ],
-                type: 'PUT',
-                data: data,
-                success: function(data, status) {
-                    if (status !== 'nocontent') {
-                        $('#titulo_toast').text('Operacion Exitosa');
-                        $('#texto_toast').text('Se modifico el producto con exito');
-                        $('.toast-header').css('background-color','green');    
-                    } else {
-                        $('#titulo_toast').text('Operacion Fallida');
-                        $('#texto_toast').text('No se mdifico el producto');
-                        $('.toast-header').css('background-color','tomato');    
-                    }
-                    $('#loader').remove();
-                    $('.modal').hide();
-                    $('.toast').toast('show');
-                    $('.toast').on('hidden.bs.toast', function () {
-                        window.scroll({
-                            top: 0, 
-                            left: 0, 
-                            behavior: 'smooth'
-                        });
-                        setTimeout(function() {
-                            document.getElementById('name').focus();
-                        }, 750);
-                    });
-                }
-            }).fail(function( jqXHR, textStatus, errorThrown ) {
-                if (jqXHR.status === 0 || jqXHR.status == 500) {
-                    $('#titulo_toast').text('Error De Conexion');
-                    $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
-                    $('.toast-header').css('background-color','tomato');
-                    $('.toast').toast('show');
-                }
-            });
-        }
-        
-        function fillForm(product) {
-            (product.bestSeller === true) ? $('#bestseller_btn').data('seleccionado', 'NO') : $('#bestseller_btn').data('seleccionado', 'SI');
-            setBtnBestSeller();
-            document.getElementById('name').value = product.name;
-            $('#name-label').addClass('active');
-            document.getElementById('description').value = product.description;
-            $('#description-label').addClass('active');
-            document.getElementById('category').value = product.category;
-            document.getElementById('state').value = product.state;
-            document.getElementById('currentPrice').value = product.currentPrice;
-            $('#currentPrice-label').addClass('active');
-            document.getElementById('originalPrice').value = product.originalPrice;
-            $('#originalPrice-label').addClass('active');
-            document.getElementById('availableStock').value = product.availableStock;
-            $('#availableStock-label').addClass('active');
-            document.getElementById('aditionalInfo').value = product.aditionalInfo;
-            $('#aditionalInfo-label').addClass('active');
-            for (let x = 0; x < product.images.length; x ++) {
-                let arr = product.images[x].split('/');
-                let nombre = '';
-                arr.forEach( part => {
-                    if (part.includes('?alt=media')) {
-                        nombre = part.substring(0, part.indexOf('?alt=media'));
-                        if (nombre.length > 15)
-                            nombre = nombre.substring(0, 10)+nombre.substring(nombre.length - 5, nombre.length);
-                    }
-                });
-                $('#images').append('<a id="'+x+'" onclick="deleteImage(this, true)" class="background-btn btn btn-outline-white waves-effect waves-light" target="_blank" role="button">'+nombre+'</a>');
-                $('#'+x).hover( e => {
-                    $('#'+x).text('Eliminar Imagen');
-                }, e2 => {
-                    $('#'+x).text(nombre);
-                });
-                images[x] = product.images[x];
-            }
-        }
-        </script>
-  </body>
 </html>

@@ -1,7 +1,5 @@
 <!--Footer-->
 <footer class="page-footer text-center font-small mt-4 wow fadeIn">
-
-
     <hr class="my-4">
 
     <!--Copyright-->
@@ -23,44 +21,9 @@
     <script type="text/javascript" src="/js/popper.min.js"></script>
     <!-- Bootstrap core JavaScript -->
     <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    
     <!-- MDB core JavaScript -->
     <script type="text/javascript" src="/js/mdb.min.js"></script>
-    <!-- Initializations -->
-    <script type="text/javascript">
-        // Animations initialization
-        new WOW().init();
-    </script>
-    <script>
-        if (window.location.href.includes('?'))
-            window.history.replaceState(null, '', window.location.href.split('?')[0]);
-        if ($(document).ready(function() {
-            if (sessionStorage.getItem('CartSession') != null) {
-                $.ajax({
-                    url: '/Carts/idCart/' + sessionStorage.getItem('CartSession'),
-                    type: 'GET',
-                    success: function (data, status) {
-                        if (status !== 'nocontent') {
-                            $('#carrito_badge').text(parseInt(data));    
-                        } else {
-                            $('#carrito_badge').text('0');  
-                        }
-                    }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    if (jqXHR.status === 0 || jqXHR.status == 500) {
-                        $('#carrito_badge').text('0');
-                        console.log('Error 500 fallo el servidor', errorThrown);
-                    }
-                });
-            } else {
-                $('#carrito_badge').text('0');
-            }
-        }));
-        function adminClick(route) {
-            if (localStorage.getItem('userSession') !== null) {
-                parent.location = `/Admin/${route}?token=${JSON.parse(localStorage.getItem('userSession'))['token']}`;
-            }
-        }
-    </script>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-storage.js"></script>
@@ -68,18 +31,5 @@
     <!-- TODO: Add SDKs for Firebase products that you want to use
         https://firebase.google.com/docs/web/setup#config-web-app -->
 
-    <script>
-        // Your web app's Firebase configuration
-        var firebaseConfig = {
-            apiKey: "AIzaSyB1LKzSELcOuXiHRhdxY2fXecKyaRotM6Y",
-            authDomain: "codens-18ad2.firebaseapp.com",
-            databaseURL: "https://codens-18ad2.firebaseio.com",
-            projectId: "codens-18ad2",
-            storageBucket: "codens-18ad2.appspot.com",
-            messagingSenderId: "311440713794",
-            appId: "1:311440713794:web:07f8926444234a20"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-    </script>
+    <script type="text/javascript" src="/js/code.js"> </script>
     

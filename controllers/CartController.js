@@ -92,6 +92,7 @@ module.exports.controller = function(app) {
               }
             } 
           }).catch(error => {
+            res.sendStatus(500);
             console.log(error);
           });
         });
@@ -254,8 +255,7 @@ module.exports.controller = function(app) {
         CartsService.deleteById(req.params['id']).then( deleteResult => {
           if (deleteResult.status === 'Success') {
             console.log('SE ELIMINO');
-            res.writeHead(200, { 'Content-Type': "application/json" });
-            res.end();
+            res.status(200).send(deleteResult.response);
           } else {
             console.log('error');
             res.sendStatus(204);

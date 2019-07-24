@@ -5,6 +5,7 @@ module.exports.controller = function(app) {
   app.get('/', function(req, res) {
     // any logic goes here
     var slides = [];
+    var animationsSpeeds = ['faster', 'fast', 'slow', 'slower'];
     ProductosService.getSample({$sample: {size: 6}}).then(result => {
       if (result.status === 'Success') {
         result.response.forEach( product => {
@@ -12,7 +13,7 @@ module.exports.controller = function(app) {
         });
         ProductosService.getSample({$sample: {size: 4}}).then(result => {
           if (result.status === 'Success') {
-            res.render('index', { slides: slides, products: result.response });
+            res.render('index', { slides: slides, products: result.response , animationsSpeeds});
           } else {
             res.render('index', { slides: slides, products: [] });
           }

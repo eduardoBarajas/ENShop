@@ -174,7 +174,7 @@ module.exports.controller = function(app) {
       if (result.status === 'NotFound') {
         ProductsService.deleteById(req.params['id']).then( result => {
           if (result.status === 'Success') {
-            res.sendStatus(200);
+            res.status(200).send(result.response);
           } else {
             res.sendStatus(204);
           }

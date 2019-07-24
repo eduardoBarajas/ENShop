@@ -190,35 +190,8 @@
     </div>
   </div>
   <!--Main layout-->
+  <% include ../partials/modal %>
   <% include ../partials/footer %>
-  <script>
-    function register() {
-      var userInfo = {name: $('#inputName').val(), lastNames: $('#inputLastNames').val(), address: $('#inputAddress').val(), cp: $('#inputCP').val(),
-        email: $('#inputEmail').val(), pass: $('#inputPassword').val(), telephone: $('#inputTelephone').val()};
-      $.ajax({
-        url: '/Auth/CreateUser',
-        type: 'POST',
-        data: userInfo,
-        success(response, status) {
-          console.log(response);
-          if (status !== 'nocontent') {
-            if (response.status === 'Error') {
-              alert(response.message);
-            } else {
-              alert(response.message);
-              parent.location = '/Login';
-            }
-          } else {
-            alert('Ocurrio un error al crear el usuario');
-          }
-        }
-      }).fail(function (jqXHR, textStatus, errorThrown) {
-          if (jqXHR.status === 0 || jqXHR.status == 500) {
-              alert('error: 500');
-          }
-      });
-    }
-  </script>
 </body>
 
 </html>

@@ -62,7 +62,7 @@
                                 <form class="d-flex justify-content-left">
                                     <!-- Default input -->
                                     <input id="quantity_form" type="number" value="1" aria-label="Search" class="form-control" style="width: 100px">
-                                    <button id="btnAgregarCarrito" class="btn btn-primary btn-md my-0 p" type="button">Agregar Al Carrito
+                                    <button id="btnAddCart" class="btn btn-primary btn-md my-0 p" type="button">Agregar Al Carrito
                                         <i class="fas fa-shopping-cart ml-1"></i>
                                     </button>
                                 </form>
@@ -114,97 +114,9 @@
                 </div>
             </main>
             <!--Main layout-->
-            <!-- Flexbox container for aligning the toasts -->
-            <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
-                <!-- Then put toasts within -->
-                <div class="toast" role="alert" aria-live="assertive" data-delay="1500" data-autohide="true" aria-atomic="true" style="position: fixed; top: 70vh; right: 40vw;z-index: 1;">
-                    <div class="toast-header">
-                        <i class="fas fa-shopping-cart fa-2x mr-2" style="color: whitesmoke;"></i>
-                        <strong id="titulo_toast" class="mr-auto" style="color:whitesmoke;font-size: 1.5rem;"></strong>
-                    </div>
-                    <div id="texto_toast" class="toast-body"></div>
-                </div>
-            </div>
-            
+            <% include ../partials/modal %>
             <p id="currentQuantity" hidden><%= product.availableStock %></p>
             <% include ../partials/footer %>
-            <script>
-                $(document).ready(function(){
-                    $('#btnAgregarCarrito').click(e => {
-                        var quatityAvailable = parseInt($('#currentQuantity').text());
-                        var text_toast = 'Se agrego el producto a tu carrito';
-                        var color_toast = 'green';
-                        console.log("cantidadDisponible: "+quatityAvailable+"  Cantidad Seleccionada: "+$('#quantity_form').val());
-                        if (quatityAvailable < $('#quantity_form').val() || quatityAvailable == 0 || $('#quantity_form').val() == 0) {
-                            color_toast = 'tomato';
-                            text_toast = 'No se puede ordenar esa cantidad de products, por favor elige otra';
-                            openToast(text_toast, color_toast);
-                        } else {
-                            console.log('entro aqui');
-                            if (sessionStorage.getItem('CartSession') == null) {
-                                $.ajax({
-                                    url: '/Carts/Generate',
-                                    type: 'GET',
-                                    success: function (data, status) {
-                                        var result = JSON.parse(data);
-                                        if (result.status === 'NotFound') {
-                                            sessionStorage.setItem('CartSession', result.response);
-                                            addOrder(text_toast, color_toast); 
-                                        } else {
-                                            $('#titulo_toast').text('No se pudo generar el carrito');
-                                            $('#texto_toast').text('Intentalo mas tarde.');
-                                            $('.toast-header').css('background-color', 'tomato');
-                                            $('.toast').toast('show');
-                                        }
-                                    }
-                                }).fail(function (jqXHR, textStatus, errorThrown) {
-                                    if (jqXHR.status === 0 || jqXHR.status == 500) {
-                                        $('#titulo_toast').text('Error De Conexion');
-                                        $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
-                                        $('.toast-header').css('background-color', 'tomato');
-                                        $('.toast').toast('show');
-                                    }
-                                });
-                            } else {
-                                addOrder(text_toast, color_toast); 
-                            }
-                        }
-                        
-                    });
-                });
-
-                function addOrder(text, color) {
-                    $.ajax({
-                        url: '/Orders/Save',
-                        type: 'POST',
-                        data: {
-                            idCart: sessionStorage.getItem('CartSession'),
-                            idProduct: "<%= product.id%>",
-                            quantity: Number($('#quantity_form').val()),
-                            unitaryPrice: Number("<%= product.currentPrice%>"),
-                            completed: false
-                        },
-                        success: function (data, status) {
-                            $('#carrito_badge').text(parseInt($('#carrito_badge').text()) + 1);
-                            $('#currentQuantity').text((parseInt($('#currentQuantity').text())-$('#quantity_form').val()));
-                            openToast(text, color);
-                        }
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        if (jqXHR.status === 0 || jqXHR.status == 500) {
-                            $('#titulo_toast').text('Error De Conexion');
-                            $('#texto_toast').text('Hubo un problema con la conexion con el servidor. ');
-                            $('.toast-header').css('background-color', 'tomato');
-                            $('.toast').toast('show');
-                        }
-                    });
-                }
-
-                function openToast(text, color) {
-                    $('#titulo_toast').text('Carrito');
-                    $('#texto_toast').text(text);
-                    $('.toast-header').css('background-color', color);
-                    $('.toast').toast('show');
-                }
-            </script>
+            <script>initProductDetails({'id': "<%=product._id%>", 'currentPrice': "<%=product.currentPrice%>"});</script>
         </body>
 </html>
