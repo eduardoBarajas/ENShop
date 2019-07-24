@@ -30,12 +30,16 @@ app.use(session({
   })
 );
 
+// env file reader init
+dotenv.config();
+
 //Import the mongoose module
 var mongoose = require('mongoose');
 
 //Set up default mongoose connection
-var mongoDB = 'mongodb://127.0.0.1/my_database';
-mongoose.connect(mongoDB, {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true});
+// var mongoDB = 'mongodb://127.0.0.1/my_database';
+var mongo_uri = `mongodb+srv://${process.env.DB_USER}:`+encodeURIComponent(process.env.DB_PASS)+process.env.DB;
+mongoose.connect(mongo_uri, {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true});
 // Get Mongoose to use the global promise library
 mongoose.Promise = global.Promise;
 //Get the default connection
@@ -52,9 +56,6 @@ app.use(helmet());
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-
-// env file reader init
-dotenv.config();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -101,6 +102,13 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   console.error(err.stack);
   res.render('error', {e: err});
+});
+
+var server_port = process.env.PORT || 8080
+var server_ip_address = process.env.IP || '0.0.0.0'
+ 
+app.listen(server_port, server_ip_address, function () {
+  console.log( "Listening on " + server_ip_address + ", port " + server_port );
 });
 
 module.exports = app;

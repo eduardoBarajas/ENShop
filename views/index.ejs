@@ -41,83 +41,82 @@
         }
     </script>
     <%if (slides.length > 0) { %>
-        <!--Carousel Wrapper-->
-        <div id="carousel-example-1z" class="carousel slide carousel-fade pt-4" data-ride="carousel">
+    <!--Carousel Wrapper-->
+    <div id="carousel-example-1z" class="carousel slide carousel-fade pt-4 mt-4" data-ride="carousel">
 
-            <!--Indicators-->
-            <ol class="carousel-indicators">
-                <% slides.forEach(e => { %>
-                <li data-target="#carousel-example-1z" data-slide-to="<%= e.index %>"></li>
-                <% }); %>
-            </ol>
-            <!--/.Indicators-->
-            <!--Slides-->
-            <div class="carousel-inner" role="listbox">
-                <% slides.forEach(function(slide) { %>
-                <!--First slide-->
-                <div id="currentSlide" class="carousel-item">
-                    <div class="view"
-                        style="background-image: url('<%= slide.src %>'); background-repeat: no-repeat; background-size: cover;">
-                        <!-- Mask & flexbox options-->
-                        <div class="mask rgba-black-strong d-flex justify-content-center align-items-center">
-
-                            <!-- Content -->
-                            <div class="text-center white-text mx-5 wow fadeIn">
-                                <h1 class="mb-4">
-                                    <strong><%= slide.name %></strong>
-                                </h1>
-                                <p class="mb-4 d-none d-md-block">
-                                    <strong><%= slide.description%></strong>
-                                </p>
-
-                                <a target="_blank" onclick="parent.location='/Producto/id/<%= slide.idProduct%>'"
-                                    class="btn btn-outline-white btn-lg">Ordenalo Ahora</a>
-                            </div>
-                            <!-- Content -->
-                        </div>
-                    </div>
+        <!--Indicators-->
+        <ol class="carousel-indicators">
+            <% slides.forEach(e => { %>
+            <li data-target="#carousel-example-1z" data-slide-to="<%= e.index %>"></li>
+            <% }); %>
+        </ol>
+        <!--/.Indicators-->
+        <!--Slides-->
+        <div class="carousel-inner" role="listbox">
+            <% slides.forEach(function(slide) { %>
+            <!--First slide-->
+            <div id="currentSlide" class="carousel-item">
+                <div class="view"
+                    style="background-image: url('<%= slide.src %>'); background-repeat: no-repeat; background-size: cover;">
                     <!-- Mask & flexbox options-->
-                </div>
-                <%if (slide.index === 0) { %>
-                <script>setActiveSlide('currentSlide');</script>
-                <% } %>
-                <!--/First slide-->
-                <% }); %>
-            </div>
-            <!--/.Slides-->
+                    <div class="mask rgba-black-strong d-flex justify-content-center align-items-center">
 
-            <!--Controls-->
-            <a class="carousel-control-prev" href="#carousel-example-1z" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carousel-example-1z" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
-            <!--/.Controls-->
+                        <!-- Content -->
+                        <div class="text-center white-text mx-5 wow fadeIn">
+                            <h1 class="mb-4">
+                                <strong><%= slide.name %></strong>
+                            </h1>
+
+                            <a target="_blank" onclick="parent.location='/Producto/id/<%= slide.idProduct%>'"
+                                class="btn btn-outline-white btn-lg">Ordenalo Ahora</a>
+                        </div>
+                        <!-- Content -->
+                    </div>
+                </div>
+                <!-- Mask & flexbox options-->
+            </div>
+            <%if (slide.index === 0) { %>
+            <script>setActiveSlide('currentSlide');</script>
+            <% } %>
+            <!--/First slide-->
+            <% }); %>
         </div>
-        <!--/.Carousel Wrapper-->
+        <!--/.Slides-->
+
+        <!--Controls-->
+        <a class="carousel-control-prev" href="#carousel-example-1z" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carousel-example-1z" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+        <!--/.Controls-->
+    </div>
+    <!--/.Carousel Wrapper-->
     <% } %>
     <!--Main layout-->
     <main>
-        <div class="container" style="margin-top: 1rem;">
+        <div class="container my-5" style="margin-top: 1rem;">
             <!--Section: Products v.3-->
             <section class="text-center my-2 mx-4">
                 <div class="row wow my-1 w-100">
                     <div class="col-md-10 text-center mx-auto my-2">
                         <%if (products.length > 0) { %>
-                            <h4 class="my-2 h4 animated slow bounceInLeft">Conoce Nuestros Productos</h4>
+                        <h4 class="my-2 h4 animated slow bounceInLeft">Conoce Nuestros Productos</h4>
 
-                            <p class="animated slower bounceInLeft text-justify">Aqui en ENShop contamos con una gran variedad de productos que
-                                van de desde electronicos hasta prendas de vestir, cada uno de nuestros
-                                productos tiene una excelente relacion precio/calidad asi que sabemos que no te
-                                arrepentiras.</p>
-                        
+                        <p class="animated slower bounceInLeft text-justify text-center">Aqui en ENShop contamos con una gran
+                            variedad de productos que
+                            van de desde electronicos hasta prendas de vestir, cada uno de nuestros
+                            productos tiene una excelente relacion precio/calidad asi que sabemos que no te
+                            arrepentiras.</p>
+
                         <% } else { %>
-                            <h4 class="my-4 h4 animated slow bounceInLeft">No Hay Productos En El Sistema</h4>
+                        <h4 class="my-4 h4 animated slow bounceInLeft">No Hay Productos En El Sistema</h4>
 
-                            <p class="animated slower bounceInLeft text-justify">Por favor comienza a anadir productos dando click en el siguiente boton.</p>
+                        <p class="animated slower bounceInLeft text-justify text-center">Por favor comienza a anadir productos dando
+                            click en el siguiente boton.</p>
                         <%}%>
                     </div>
                 </div>
@@ -126,14 +125,23 @@
                     <%if (products.length > 0) { %>
                         <% products.forEach(product => {%>
                         <!--Grid column-->
-                        <div class="col-lg-3 col-md-3 mb-4 animated <%=animationsSpeeds[products.indexOf(product)]%> bounceInUp">
+
+
+
+
+
+
+                        <div
+                            class="col-lg-3 col-md-3 mb-4 animated <%=animationsSpeeds[products.indexOf(product)]%> bounceInUp">
 
                             <!--Card-->
-                            <div class="card">
+                            <div class="card shadow view">
 
                                 <!--Card image-->
-                                <div class="view overlay">
+                                <div class="overlay">
                                     <img src="<%= product.images[0]%>" class="card-img-top" alt="">
+                                    <span
+                                        class="badge badge-pill danger-color w-75 text-right" style="background-color: #4CAF50!important;"><%= product.state%></span>
                                     <a href="/Producto/id/<%= product._id%>">
                                         <div class="mask rgba-white-slight"></div>
                                     </a>
@@ -141,50 +149,55 @@
                                 <!--Card image-->
 
                                 <!--Card content-->
-                                <div class="card-body text-center">
-                                    <!--Category & Title-->
-                                    <a class="grey-text">
-                                        <h5><%= product.category%></h5>
+                                <div class="card-body product-body py-2 text-center px-0">
+                                    <a href="/Producto/id/<%= product._id%>" class="product-name dark-grey-text">
+                                        <%= product.name%>
                                     </a>
-                                    <h5>
-                                        <strong>
-                                            <a href="/Producto/id/<%= product._id%>"
-                                                class="dark-grey-text"><%= product.name%>
-                                                <span class="badge badge-pill danger-color"><%= product.state%></span>
-                                            </a>
-                                        </strong>
-                                    </h5>
-                                    <h4 class="font-weight-bold red-text PrecioOriginal">
-                                        <strong><%= product.originalPrice%>$</strong>
-                                    </h4>
-                                    <h4 class="font-weight-bold blue-text">
-                                        <strong><%= product.currentPrice%>$</strong>
-                                    </h4>
+                                    <div class="row">
+                                        <% if (product.originalPrice === product.currentPrice) {%>
+                                        <div class="col-12 col-md-12">
+                                            <%} else {%>
+                                            <div class="col-6 col-md-6 px-0" style="background-color: tomato;">
+                                                <p class="font-weight-bold white-text PrecioOriginal mt-1">
+                                                    <strong>Antes:
+                                                    </strong><small>$<%=product.originalPrice%></small>
+                                                </p>
+                                            </div>
+                                            <div class="col-6 col-md-6">
+                                                <%}%>
+                                        <h5 class="font-weight-bold green-text mt-1">
+                                            <strong>
+                                                $<%=product.currentPrice%>
+                                                </strong>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--Card content-->
+
                                 </div>
-                                <!--Card content-->
+                                <!--Card-->
 
                             </div>
-                            <!--Card-->
-
-                        </div>
-                        <!--Grid column-->
-                        <%});%>
-                    <%}%>
+                            <!--Grid column-->
+                            <%});%>
+                            <%}%>
                 </div>
                 <!--Grid row-->
             </section>
             <!--Section: Products v.3-->
             <% if ((products.length > 0)) { %>
-                <div class="row w-100 animated slow bounceInLeft">
-                    <a target="_blank" onclick="parent.location='/Catalogo'"
-                        class="background-btn btn btn-outline-white btn-lg mx-auto">Ve Todos Nuestros Productos</a>
-                </div>
-            <% } else { %>
-                <div class="row w-100 animated slow bounceInLeft">
-                    <a target="_blank" onclick="parent.location='/AgregarProducto'"
-                        class="background-btn btn btn-outline-white btn-lg mx-auto">Agrega Productos</a>
-                </div>
-            <%}%>
+                            <div class="row w-100 animated slow bounceInLeft">
+                                <a target="_blank" onclick="parent.location='/Catalogo'"
+                                    class="background-btn btn btn-outline-white btn-lg mx-auto">Ve Todos Nuestros
+                                    Productos</a>
+                            </div>
+                            <% } else { %>
+                            <div class="row w-100 animated slow bounceInLeft">
+                                <a target="_blank" onclick="parent.location='/AgregarProducto'"
+                                    class="background-btn btn btn-outline-white btn-lg mx-auto">Agrega Productos</a>
+                            </div>
+                            <%}%>
         </div>
     </main>
     <!--Main layout-->

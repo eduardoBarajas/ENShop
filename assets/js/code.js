@@ -1,4 +1,5 @@
 $(document).ready(e => {
+    // se puede saber si la pagina esta siendo recargada
     // Animations initialization
     new WOW().init();
     // reemplazar los urls que tiene el token para quitarlo
@@ -40,8 +41,10 @@ $(document).ready(e => {
             logout();
         }
     } else {
-        document.getElementById('btnLogin').style.display = 'block';
-        document.getElementById('btnLogout').style.display = 'none';
+        if (document.getElementById('btnLogin') !== null) {
+            document.getElementById('btnLogin').style.display = 'block';
+            document.getElementById('btnLogout').style.display = 'none';
+        }
     }
 });
 
@@ -89,14 +92,38 @@ function openModal(options) {
         btnClose.style.display = 'block';
         btnClose.classList.add('fadeIn');
     }
+    if (options['choices'] != null) {
+        btnCancel.attributes.removeNamedItem('data-dismiss');
+        btnAccept.textContent = options['choices']['one'];
+        btnCancel.textContent = options['choices']['two'];
+        if (options['choices']['three'] != null) {
+            btnClose.style = 'block';
+            btnClose.textContent = options['choices']['three'];
+            btnClose.attributes.removeNamedItem('data-dismiss');
+            btnClose.classList.add('btn-color-green');
+        }
+    }
+    if (options['colors'] != null) {
+        btnAccept.classList.add(options['colors']['one']);
+        btnCancel.classList.add(options['colors']['two']);
+    }
     if (!$('#botom-modal').hasClass('show')) {
         $('#botom-modal').modal('toggle');
     }
     $('#botom-modal').on('hidden.bs.modal', function (e) {
+        $('#btn-close-modal').attr('data-dismiss', 'modal');
+        $('#btn-cancel-modal').attr('data-dismiss', 'modal');
+        btnAccept.textContent = 'Continuar';
+        btnCancel.textContent = 'Cancelar';
         btnClose.classList.remove('fadeIn');
+        btnClose.classList.remove('btn-color-green');
         btnCancel.style.display = 'block';
         btnAccept.style.display = 'block';
         btnClose.style.display = 'none';
+        if (options['colors'] != null) {
+            btnAccept.classList.remove(options['colors']['one']);
+            btnCancel.classList.remove(options['colors']['two']);
+        }
         modalContent.classList.remove('content_modal_failed');
         modalContent.classList.remove('content_modal_success');
     });
@@ -437,8 +464,22 @@ function initCatalogModule(role) {
     setCatalogRole(role);
     getAllCatalogProducts();
     // listerner para el modal que decide si eliminar o no el producto
+    $('#btn-cancel-modal').click(e => {
+        if (sessionStorage.getItem('selectedIdProduct') != null) {
+            deleteProduct(sessionStorage.getItem('selectedIdProduct'));
+        }
+    });
     $('#btn-accept-modal').click(e => {
-        deleteProduct(sessionStorage.getItem('deletedProductId'));
+        if (sessionStorage.getItem('selectedIdProduct') != null) {
+            window.location.href = '/ModificarProducto/id/' + sessionStorage.getItem('selectedIdProduct');
+            sessionStorage.removeItem('selectedIdProduct');
+        }
+    });
+    $('#btn-close-modal').click(e => {
+        if (sessionStorage.getItem('selectedIdProduct') != null) {
+            window.location.href = '/Producto/id/' + sessionStorage.getItem('selectedIdProduct');
+            sessionStorage.removeItem('selectedIdProduct');
+        }
     });
 }
 
@@ -475,13 +516,13 @@ function deleteProduct(idProduct) {
             }
         }
     });
-    sessionStorage.removeItem('deletedProductId');
+    sessionStorage.removeItem('selectedIdProduct');
 }
 
-// Muestra el modal para que se decida si eliminar o no.
-function showDeleteModal(idProduct) {
-    openModal({ 'body_text': 'Deseas eliminar este producto del sistema?' });
-    sessionStorage.setItem('deletedProductId', idProduct);
+function showProductAdminActionsModal(idProducto) {
+    openModal({ 'body_text': 'Que quieres hacer con este producto?', 'choices': {'one': 'Editar', 'two': 'Eliminar', 'three': 'Ver'},
+        'colors': {'one': 'btn-color-indigo', 'two': 'btn-color-red'}});
+    sessionStorage.setItem('selectedIdProduct', idProducto);
 }
 
 function getAllCatalogProducts() {
@@ -571,11 +612,11 @@ function setCatalogProducts(data) {
         for (let x = 0; x < data.length; x++) {
             // se comienza colocando el primer row.
             if (x === 0)
-                elements = '<div class="row wow fadeIn w-100" id="prod_' + data[x]._id + '">';
+                elements = '<div class="row wow fadeIn w-100 mx-0" id="prod_' + data[x]._id + '">';
             // cada cuatro elementos se cerrara el row y se creara otro.
             if (x % 4 === 0 && x > 0) {
                 elements += '</div>';
-                elements += '<div class="row wow fadeIn w-100" id="prod_' + data[x]._id + '">';
+                elements += '<div class="row wow fadeIn w-100 mx-0" id="prod_' + data[x]._id + '">';
                 if (counter !== 0) {
                     counter++;
                     isSuma = !isSuma;
@@ -583,20 +624,33 @@ function setCatalogProducts(data) {
             }
             (isSuma) ? counter++ : counter--;
             let animation = 'animated bounceInUp ' + animationsSpeeds[counter];
-            if (CATALOG_ROLE === 'User') {
-                elements += '<div class="' + animation + ' col-lg-3 col-md-3 mb-4"><div class="card"><div class="view overlay"><img src="' + data[x].images[0] + '" class="card-img-top" alt="">';
-                elements += '<a href="/Producto/id/' + data[x]._id + '"><div class="mask rgba-white-slight"></div></a></div><div class="card-body text-center">';
-                elements += '<a class="grey-text"><h5>' + data[x].category + '</h5></a><h5><strong><a href="/Producto/id/' + data[x]._id + '" class="dark-grey-text">' + data[x].name + '<span class="badge badge-pill danger-color">' + data[x].state + '</span>';
-                elements += '</a></strong></h5><h4 class="font-weight-bold red-text PrecioOriginal"><strong>' + data[x].originalPrice + '$</strong></h4><h4 class="font-weight-bold blue-text">';
-                elements += '<strong>' + data[x].currentPrice + '$</strong></h4></div></div></div>';
+            let priceRow = '';
+            if (data[x].originalPrice === data[x].currentPrice) {
+                priceRow = '<div class="col-12 col-md-12">';
             } else {
-                elements += '<div class="' + animation + ' col-lg-3 col-md-3 mb-4"><div class="card"><div class="view overlay"><img id="img-' + data[x]._id + '" src="' + data[x].images[0] + '" class="card-img-top" alt=""><a href="/Producto/id/' + data[x]._id + '">';
-                elements += '<div class="mask rgba-white-slight"></div></a></div><div class="card-body text-center"><a class="grey-text"><h5>' + data[x].category + '</h5></a><h5><strong><a href="/Producto/id/' + data[x]._id + '" class="dark-grey-text">';
+                priceRow = '<div class="col-6 col-md-6 px-0" style="background-color: tomato;"><p class="font-weight-bold white-text PrecioOriginal mt-1"><strong>Antes: </strong><small>' + data[x].originalPrice + '$</small></p></div><div class="col-6 col-md-6">';
+            
+            }
+            if (CATALOG_ROLE === 'User') {
+                elements += '<div class="' + animation + ' col-lg-3 col-md-3 mb-4"><div class="card shadow view"><div class="overlay"><img src="' + data[x].images[0] + '" class="card-img-top" alt=""> <span class="badge badge-pill danger-color w-75 text-right" style="background-color: #4CAF50!important;">' + data[x].state + '</span>';
+                elements += '<a href="/Producto/id/' + data[x]._id + '"><div class="mask rgba-white-slight"></div></a></div><div class="card-body product-body py-2 text-center px-0">';
+                elements += '<a href="/Producto/id/' + data[x]._id + '" class="product-name dark-grey-text">' + data[x].name;
+                elements += '</a><div class="row">'+priceRow+'<h5 class="font-weight-bold green-text mt-1">';
+                elements += '<strong>' + data[x].currentPrice + '$</strong></h5></div></div></div></div></div>';
+            } else {
+                /*elements += '<div class="' + animation + ' col-lg-3 col-md-3 mb-4"><div class="card"><div class="view overlay"><img id="img-' + data[x]._id + '" src="' + data[x].images[0] + '" class="card-img-top" alt=""><a href="/Producto/id/' + data[x]._id + '">';
+                elements += '<div class="mask rgba-white-slight"></div></a></div><div class="card-body text-center"><h5><strong><a href="/Producto/id/' + data[x]._id + '" class="dark-grey-text">';
                 elements += data[x].name + '<span class="mx-2 badge badge-pill danger-color">' + data[x].state + '</span></a></strong></h5><div class="row"><div class="col-md-6"><button id="btnEditar" onclick="parent.location=\'/ModificarProducto/id/' + data[x]._id + '\'" class="btn btn-primary btn-md btn-block mx-auto px-0"';
                 elements += `type="button">Editar</button></div><div class="col-md-6"><button onclick="showDeleteModal('${data[x]._id}')" class="btn btn-primary btn-md btn-block mx-auto px-0" style="background-color: tomato!important;" type="button">`;
-                elements += 'Eliminar</button></div></div></div></div></div>';
+                elements += 'Eliminar</button></div></div></div></div></div>';*/
+                elements += '<div class="' + animation + ' col-lg-3 col-md-3 mb-4"><div class="card shadow view"><div class="overlay"><img src="' + data[x].images[0] + '" class="card-img-top" alt=""> <span class="badge badge-pill danger-color w-75 text-right" style="background-color: #4CAF50!important;">' + data[x].state + '</span>';
+                elements += `<a onclick="showProductAdminActionsModal('${data[x]._id}')"><div class="mask rgba-white-slight"></div></a></div><div class="card-body py-2 text-center px-0">`;
+                elements += `<a onclick="showProductAdminActionsModal('${data[x]._id}')" class="product-name dark-grey-text">` + data[x].name;
+                elements += '</a><div class="row">'+priceRow+'<h5 class="font-weight-bold green-text mt-1">';
+                elements += '<strong>' + data[x].currentPrice + '$</strong></h5></div>  </div> </div></div></div>';
             }
         }
+        
         $('#products').append(elements);
     } catch (e) { }
 }
@@ -843,9 +897,7 @@ function fillUserInfo(idUser) {
             if (status !== 'nocontent') {
                 let data = JSON.parse(res);
                 $('#lastName').val(data.lastNames);
-                $('#lastName').focus();
                 $('#firstName').val(data.name);
-                $('#firstName').focus();
                 $('#email').val(data.email);
                 $('#address').val(data.address);
                 $('#zip').val(data.cp);
@@ -1270,9 +1322,8 @@ function register() {
                 if (response.status === 'Error') {
                     openModal({ 'body_text': response.message, 'operation': 'Failed' });
                 } else {
-                    openModal({ 'body_text': response.message, 'operation': 'Failed' });
-                    alert(response.message);
-                    $('#btn-accept-modal').click(e => { parent.location = '/Login'; });
+                    openModal({ 'body_text': response.message, 'operation': 'Success' });
+                    $('#btn-close-modal').click(e => { parent.location = '/Login'; });
                 }
             } else {
                 openModal({ 'body_text': 'Ocurrio un error al crear el usuario', 'operation': 'Failed' });

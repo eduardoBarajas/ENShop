@@ -305,7 +305,7 @@ module.exports.controller = function(app) {
   });
 
   async function generateCartId() {
-    for (let x = 0; x < 10; x++) {
+    for (let x = 0; x < 50; x++) {
       let id = UUID.create().toString().split('-')[0];
       const result = await CartsService.exists(id);
       if (result.status === 'NotFound') {
